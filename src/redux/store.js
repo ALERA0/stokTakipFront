@@ -1,20 +1,20 @@
 import {
-    configureStore,
-    combineReducers,
-    getDefaultMiddleware,
-  } from "@reduxjs/toolkit";
-  
+  combineReducers,
+  configureStore,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit";
+
 import logger from "redux-logger";
-  
-import { authenticationSlice } from "./slice/authenticaitonSlice";
-  
+
+import { authSlice, getAllProductsSlice, getProductDetailSlice } from "./slice";
+
 const reducer = combineReducers({
-    authentication: authenticationSlice.reducer, // .reducer'ı ekleyin
-  });
-  
+  auth: authSlice,
+  getAllProducts: getAllProductsSlice,
+  getProductDetail: getProductDetailSlice,
+});
+
 export const store = configureStore({
-    reducer,
-    middleware: getDefaultMiddleware().concat(logger), // getDefaultMiddleware() şeklinde değiştirin
-  });
-  
-  export default store;
+  reducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+});
