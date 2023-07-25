@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,57 +9,117 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import ModalComponent from "../../ModalComponent";
 import { useSelector, useDispatch } from "react-redux";
-import { getAllProductsProcess, getProductDetailProcess } from "@/src/api";
+import {
+  addNewProductProcess,
+  getAllProductsProcess,
+  getProductDetailProcess,
+} from "@/src/api";
+import logo2 from "../../../../public/images/logo2.png";
+import add from "../../../../public/images/add.png";
+
+import Image from "next/image";
+import { Button } from "@mui/material";
+import AddingModal from "../../AddingModal/AddingModal";
+
+const displayImage = (base64String) => {
+  return (
+    <img
+      src={`data:image/jpeg;base64,${base64String}`}
+      alt="Ürün Resmi"
+      style={{ maxWidth: "80px", maxHeight: "100px" }}
+    />
+  );
+};
 
 const columns = [
-  { id: "productCode", label: "Ürün Kodu", minWidth: 100 },
-  { id: "productName", label: "Ürün İsmi", minWidth: 170 },
+  {
+    id: "productImage",
+    label: "",
+    render: (item) => displayImage(item.productImage.data),
+    minWidth: 300,
+  },
+
+  { id: "productCode", label: "Ürün Kodu", minWidth: 170 },
   {
     id: "productQuantity",
     label: "Adet",
-    minWidth: 170,
-    
-    format: (value) => value.toLocaleString("en-US"),
+    minWidth: 100,
   },
-  { id: "_id" },
+  {
+    id: "productPrice",
+    label: "Fiyat",
+    minWidth: 110,
+  },
+  {
+    id: "actions",
+    label: "İşlemler",
+    minWidth: 100,
+  },
+
   // Diğer sütunlar...
 ];
-
-// function createData(name, code, population, size) {
-//   const density = population / size;
-//   return { name, code, population, size, density };
-// }
-
-// const rows = [
-//   createData("India", "IN", 1324171354, 3287263),
-//   createData("China", "CN", 1403500365, 9596961),
-//   createData("Italy", "IT", 60483973, 301340),
-//   createData("United States", "US", 327167434, 9833520),
-//   createData("Canada", "CA", 37602103, 9984670),
-//   createData("Australia", "AU", 25475400, 7692024),
-//   createData("Germany", "DE", 83019200, 357578),
-//   createData("Ireland", "IE", 4857000, 70273),
-//   createData("Mexico", "MX", 126577691, 1972550),
-//   createData("Japan", "JP", 126317000, 377973),
-//   createData("France", "FR", 67022000, 640679),
-//   createData("United Kingdom", "GB", 67545757, 242495),
-//   createData("Russia", "RU", 146793744, 17098246),
-//   createData("Nigeria", "NG", 200962417, 923768),
-//   createData("Brazil", "BR", 210147125, 8515767),
-// ];
 
 const Stok = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
+  const [openAddingModal, setOpenAddingModal] = useState(false);
+
+  const [productName, setProductName] = useState("");
+  const [productCode, setProductCode] = useState("");
+  const [productImage, setProductImage] = useState("");
+  const [productQuantity, setProductQuantity] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productPackageType, setProductPackageType] = useState("");
+  const [productBarcode, setProductBarcode] = useState("");
+  const [productAddress, setProductAddress] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+
+  // Yeni ürün bilgilerini state'lerle güncellemek için handleChange fonksiyonları
+  const handleProductNameChange = (e) => setProductName(e.target.value);
+  const handleProductCodeChange = (e) => setProductCode(e.target.value);
+  const handleProductImageChange = (e) => setProductImage(e.target.value);
+  const handleProductQuantityChange = (e) => setProductQuantity(e.target.value);
+  const handleProductPriceChange = (e) => setProductPrice(e.target.value);
+  const handleProductPackageTypeChange = (e) =>
+    setProductPackageType(e.target.value);
+  const handleProductBarcodeChange = (e) => setProductBarcode(e.target.value);
+  const handleProductAddressChange = (e) => setProductAddress(e.target.value);
+  const handleProductDescriptionChange = (e) =>
+    setProductDescription(e.target.value);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleAddingModalOpen = () => setOpenAddingModal(true);
+  const handleAddingModalClose = () => setOpenAddingModal(false);
   const dispatch = useDispatch();
 
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
   const { data: ProductDetail } = useSelector(
     (state) => state.getProductDetail
   );
+  const { data: AddNewProduct } = useSelector((state) => state.addNewProduct);
+
+  const addNewProduct = () => {
+    dispatch(
+      addNewProductProcess({
+        productCode: productCode,
+        productName: productName,
+        productPrice: productPrice,
+        productQuantity: productQuantity,
+        productImage: productImage,
+        productDescription: productDescription,
+        productPackageType: productPackageType,
+        productBarcode: productBarcode,
+        productAddress: productAddress,
+      })
+    );
+    dispatch(getAllProductsProcess());
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -74,17 +134,31 @@ const Stok = () => {
     dispatch(getAllProductsProcess());
   }, []);
 
-  console.log(AllProductData, "AllProductData");
-  console.log(ProductDetail?.product, "ProductDetails");
-
   const handleProductDetail = (_id) => {
-    console.log("Clicked row ID:SDFKHJSDFLKHDSFLKHFDSALJASDFLHK", _id);
     dispatch(getProductDetailProcess({ _id }));
     setOpen(true); // Move this line to the function to open the modal
   };
 
   return (
-    <div className="h-full w-full bg-light rounded-lg pr-16 lg:pl-16 md:pl-8 pl-2  py-8 flex flex-col   ">
+    <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col   ">
+      <div className="w-full flex justify-between items-center mb-6 ">
+        <h2 className="lg:text-2xl md:text-xl text-lg font-bold  flex justify-center">
+          Ürün Stoğu
+        </h2>
+        <Button
+          className="flex lg:gap-3 md:gap-2 gap-1 hover:bg-blue-900 hover:text-white duration-500"
+          onClick={handleAddingModalOpen}
+        >
+          <h2 className="lg:text-xl md:text-lg text-xs">Yeni Ürün Oluştur</h2>
+          <Image
+            src={add}
+            alt="Ürün Ekle"
+            className="cursor-pointer"
+            onClick={handleOpen}
+            width={30}
+          />
+        </Button>
+      </div>
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
@@ -94,10 +168,10 @@ const Stok = () => {
                   <TableCell
                     key={column.id}
                     align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                    
+                    style={{ minWidth: column.minWidth, font: "bold" }}
+                    className="text-xl font-bold"
                   >
-                    {column.label}
+                    {column.id === "productImage" ? "Ürün İsmi" : column.label}
                   </TableCell>
                 ))}
               </TableRow>
@@ -107,23 +181,79 @@ const Stok = () => {
                 AllProductData.slice(
                   page * rowsPerPage,
                   page * rowsPerPage + rowsPerPage
-                ).map((AllProductData) => {
+                ).map((productData) => {
                   return (
                     <TableRow
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={AllProductData._id}
-                      onClick={() => handleProductDetail(AllProductData._id)}
+                      key={productData._id}
+                      onClick={() => handleProductDetail(productData._id)}
+                      className="cursor-pointer"
                     >
                       {columns.map((column) => {
-                        const value = AllProductData[column.id];
-                        console.log(value, "value");
+                        const value = productData[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
+                            {column.id === "productImage" ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                {productData.productImage.data ? (
+                                  <div
+                                    style={{
+                                      maxWidth: "80px",
+                                      maxHeight: "100px",
+                                    }}
+                                  >
+                                    {column.render(productData)}
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      maxWidth: "80px",
+                                      maxHeight: "100px",
+                                    }}
+                                  >
+                                    <Image
+                                      src={logo2}
+                                      alt="Logo"
+                                      layout="responsive"
+                                      width={80}
+                                      height={100}
+                                      objectFit="contain"
+                                      className="min-h-[40px]"
+                                    />
+                                  </div>
+                                )}
+                                <span style={{ marginLeft: "10px" }}>
+                                  {productData.productName}
+                                </span>
+                              </div>
+                            ) : column.id === "actions" ? (
+                              <div className="flex justify-start items-center ">
+                                <Button
+                                  variant="outlined"
+                                  onClick={() => handleEdit(productData._id)}
+                                  className="md:mr-2 bg-blue-500 hover:bg-blue-800 text-white"
+                                >
+                                  Düzenle
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  onClick={() => handleDelete(productData._id)}
+                                >
+                                  Sil
+                                </Button>
+                              </div>
+                            ) : column.format && typeof value === "number" ? (
+                              column.format(value)
+                            ) : (
+                              value
+                            )}
                           </TableCell>
                         );
                       })}
@@ -136,7 +266,7 @@ const Stok = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={AllProductData.length}
+          count={AllProductData?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -148,47 +278,40 @@ const Stok = () => {
         handleClose={handleClose}
         handleOpen={handleOpen}
         productName={ProductDetail?.productName}
+        productPrice={ProductDetail?.productPrice}
+        productQuantity={ProductDetail?.productQuantity}
+        productImage={ProductDetail?.productImage.data}
+        productDescription={ProductDetail?.productDescription}
+        productCode={ProductDetail?.productCode}
+        productAddress={ProductDetail?.productAddress}
+        productPackageType={ProductDetail?.productPackageType}
+        productBarcode={ProductDetail?.productBarcode}
+      />
+      <AddingModal
+        openAddingModal={openAddingModal}
+        handleCloseAddingModal={handleAddingModalClose}
+        addNewProduct={addNewProduct}
+        onFinishFailed={onFinishFailed}
+        productName={productName}
+        productCode={productCode}
+        productImage={productImage}
+        productQuantity={productQuantity}
+        productPrice={productPrice}
+        productPackageType={productPackageType}
+        productBarcode={productBarcode}
+        productAddress={productAddress}
+        productDescription={productDescription}
+        handleProductNameChange={handleProductNameChange}
+        handleProductCodeChange={handleProductCodeChange}
+        handleProductImageChange={handleProductImageChange}
+        handleProductQuantityChange={handleProductQuantityChange}
+        handleProductPriceChange={handleProductPriceChange}
+        handleProductPackageTypeChange={handleProductPackageTypeChange}
+        handleProductBarcodeChange={handleProductBarcodeChange}
+        handleProductAddressChange={handleProductAddressChange}
+        handleProductDescriptionChange={handleProductDescriptionChange}
       />
     </div>
-
-    // <div className="h-full w-full bg-light rounded-lg pr-16 lg:pl-16 md:pl-8 pl-2  py-8 flex flex-col   ">
-    //   <h2 className="font-bold text-2xl mb-6">Ürün Stoğu</h2>
-    //   <Paper sx={{ width: "100%", overflow: "hidden" }}>
-    //     {/* ...Tablo kısmını değiştirmeden bırakın... */}
-    //     <TableBody>
-    //       {data
-    //         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    //         .map((data) => {
-    //           return (
-    //             <TableRow
-    //               hover
-    //               role="checkbox"
-    //               tabIndex={-1}
-    //               key={data._id}
-    //               onClick={() => setOpen(true)}
-    //             >
-    //               {columns.map((column) => {
-    //                 const value = data[column.id];
-    //                 return (
-    //                   <TableCell key={column.id} align={column.align}>
-    //                     {column.format && typeof value === "number"
-    //                       ? column.format(value)
-    //                       : value}
-    //                   </TableCell>
-    //                 );
-    //               })}
-    //             </TableRow>
-    //           );
-    //         })}
-    //     </TableBody>
-    //     {/* ...Diğer kısımları değiştirmeden bırakın... */}
-    //   </Paper>
-    //   <ModalComponent
-    //     open={open}
-    //     handleClose={handleClose}
-    //     handleOpen={handleOpen}
-    //   />
-    // </div>
   );
 };
 

@@ -20,7 +20,7 @@ const login = (thunkAPI) => {
     );
   });
 };
-
+// Giriş işlemi
 const authLogin = createAsyncThunk("auth/authLogin", async (data) => {
   const { email, password } = data;
   const params = new FormData();
@@ -39,6 +39,7 @@ const authLogOut = createAsyncThunk("auth/authLogOut", async () => {
   return res.data;
 });
 
+//Ürünlerin hepsini getirme
 const getAllProductsProcess = createAsyncThunk(
   "getAllProducts/getAllProductsProcess",
   async () => {
@@ -47,6 +48,7 @@ const getAllProductsProcess = createAsyncThunk(
   }
 );
 
+//Ürün detayını getirme
 const getProductDetailProcess = createAsyncThunk(
   "getProductDetail/getProductDetailProcess",
   async (data) => {
@@ -58,10 +60,45 @@ const getProductDetailProcess = createAsyncThunk(
   }
 );
 
+//Yeni ürün ekleme
+
+const addNewProductProcess = createAsyncThunk(
+  "addNewProduct/addNewProductProcess",
+  async (data) => {
+    const {
+      productCode,
+      productName,
+      productPrice,
+      productImage,
+      productQuantity,
+      productDescription,
+      productPackageType,
+      productBarcode,
+      productAddress,
+    } = data;
+    const params = new FormData();
+    params.append("productCode", productCode);
+    params.append("productName", productName);
+    params.append("productPrice", productPrice);
+    params.append("productImage", productImage);
+    params.append("productQuantity", productQuantity);
+    params.append("productDescription", productDescription);
+    params.append("productPackageType", productPackageType);
+    params.append("productBarcode", productBarcode);
+    params.append("productAddress", productAddress);
+    try {
+      const res = await axios.post("addProduct", params);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export {
   login,
   authLogin,
   authLogOut,
   getAllProductsProcess,
   getProductDetailProcess,
+  addNewProductProcess,
 };

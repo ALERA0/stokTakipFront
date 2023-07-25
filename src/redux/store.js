@@ -6,12 +6,18 @@ import {
 
 import logger from "redux-logger";
 
-import { authSlice, getAllProductsSlice, getProductDetailSlice } from "./slice";
+import {
+  authSlice,
+  getAllProductsSlice,
+  getProductDetailSlice,
+  addNewProductSlice,
+} from "./slice";
 
 const reducer = combineReducers({
   auth: authSlice,
   getAllProducts: getAllProductsSlice,
   getProductDetail: getProductDetailSlice,
+  addNewProduct: addNewProductSlice,
 });
 
 export const store = configureStore({
