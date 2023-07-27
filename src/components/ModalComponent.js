@@ -3,8 +3,9 @@ import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { Button, Input } from "antd";
+import { TextareaAutosize } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -32,7 +33,17 @@ const ModalComponent = ({
   productBarcode,
   productAddress,
   productDescription,
+  setUrunAdi,
+  updateProductInModal,
+  ProductDetail
 }) => {
+  const handleSave = () => {
+    updateProductInModal(ProductDetail?._id); // ModalComponent'in içinde doğru kullanım
+  };
+  console.log(
+    productName,
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  );
   return (
     <div>
       <Modal
@@ -55,15 +66,22 @@ const ModalComponent = ({
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              {productName}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün İsmi :
+              </label>
+              <Input
+                defaultValue={productName}
+                onChange={(e) => setUrunAdi(e.target.value)}
+                className="w-3/5"
+              />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2 gap-2 text-2xl font-bold text-center"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
               {productImage && (
                 <img
@@ -78,57 +96,90 @@ const ModalComponent = ({
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-2 mt-4"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Kodu : {productCode}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Kodu :
+              </label>
+              <Input defaultValue={productCode} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Adeti : {productQuantity}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Adeti :
+              </label>
+              <Input defaultValue={productQuantity} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Fiyatı : {productPrice}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Fiyatı :
+              </label>
+              <Input defaultValue={productPrice} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Paket Türü : {productPackageType}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Paket Türü :
+              </label>
+              <Input defaultValue={productPackageType} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Barkodu : {productBarcode}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Barkod No :
+              </label>
+              <Input defaultValue={productBarcode} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="my-2"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Adresi : {productAddress}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Raf Adresi :
+              </label>
+              <Input defaultValue={productAddress} className="w-3/5" />
             </Typography>
             <Typography
               id="transition-modal-description"
               sx={{ mt: 2 }}
-              className="flex flex-"
+              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              Ürün Açıklaması : {productDescription}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Açıklama :
+              </label>
+              <TextareaAutosize
+                defaultValue={productDescription}
+                className="w-3/5"
+              />
             </Typography>
+            <div className="w-full flex justify-end mt-4">
+              <Button
+                type="primary"
+                className="bg-blue-700"
+                onClick={handleSave}
+              >
+                Kaydet
+              </Button>
+            </div>
           </Box>
         </Fade>
       </Modal>

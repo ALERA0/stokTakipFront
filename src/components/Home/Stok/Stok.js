@@ -13,6 +13,7 @@ import {
   addNewProductProcess,
   getAllProductsProcess,
   getProductDetailProcess,
+  updateProductProcess,
 } from "@/src/api";
 import logo2 from "../../../../public/images/logo2.png";
 import add from "../../../../public/images/add.png";
@@ -20,6 +21,7 @@ import add from "../../../../public/images/add.png";
 import Image from "next/image";
 import { Button } from "@mui/material";
 import AddingModal from "../../AddingModal/AddingModal";
+import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
 
 const displayImage = (base64String) => {
   return (
@@ -65,6 +67,18 @@ const Stok = () => {
   const [open, setOpen] = React.useState(false);
   const [openAddingModal, setOpenAddingModal] = useState(false);
 
+
+  const handleProductDetail = (_id) => {
+    dispatch(getProductDetailProcess({ _id }));
+    setOpen(true); // Move this line to the function to open the modal
+  };
+
+
+  const { data: ProductDetail } = useSelector(
+    (state) => state.getProductDetail
+  );
+
+
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
   const [productImage, setProductImage] = useState("");
@@ -75,18 +89,28 @@ const Stok = () => {
   const [productAddress, setProductAddress] = useState("");
   const [productDescription, setProductDescription] = useState("");
 
+
+  const [urunAdi, setUrunAdi] = useState(ProductDetail?.productName);
+  const [sk, setSK] = useState(ProductDetail?.productCode);
+  const [fiyat, setFiyat] = useState(ProductDetail?.productPrice.toString());
+  const [barkod, setBarkod] = useState(ProductDetail?.productBarcode);
+  const [aciklama, setAciklama] = useState(ProductDetail?.productDescription);
+  const [adres, setAdres] = useState(ProductDetail?.productAddress);
+  const [paket, setPaket] = useState(ProductDetail?.productPackageType);
+  const [adet, setAdet] = useState(ProductDetail?.productQuantity);
+
   // Yeni ürün bilgilerini state'lerle güncellemek için handleChange fonksiyonları
-  const handleProductNameChange = (e) => setProductName(e.target.value);
-  const handleProductCodeChange = (e) => setProductCode(e.target.value);
-  const handleProductImageChange = (e) => setProductImage(e.target.value);
-  const handleProductQuantityChange = (e) => setProductQuantity(e.target.value);
-  const handleProductPriceChange = (e) => setProductPrice(e.target.value);
-  const handleProductPackageTypeChange = (e) =>
-    setProductPackageType(e.target.value);
-  const handleProductBarcodeChange = (e) => setProductBarcode(e.target.value);
-  const handleProductAddressChange = (e) => setProductAddress(e.target.value);
-  const handleProductDescriptionChange = (e) =>
-    setProductDescription(e.target.value);
+  // const handleProductNameChange = (e) => setProductName(e.target.value);
+  // const handleProductCodeChange = (e) => setProductCode(e.target.value);
+  // const handleProductImageChange = (e) => setProductImage(e.target.value);
+  // const handleProductQuantityChange = (e) => setProductQuantity(e.target.value);
+  // const handleProductPriceChange = (e) => setProductPrice(e.target.value);
+  // const handleProductPackageTypeChange = (e) =>
+  //   setProductPackageType(e.target.value);
+  // const handleProductBarcodeChange = (e) => setProductBarcode(e.target.value);
+  // const handleProductAddressChange = (e) => setProductAddress(e.target.value);
+  // const handleProductDescriptionChange = (e) =>
+  //   setProductDescription(e.target.value);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -95,26 +119,40 @@ const Stok = () => {
   const dispatch = useDispatch();
 
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
-  const { data: ProductDetail } = useSelector(
-    (state) => state.getProductDetail
-  );
+
   const { data: AddNewProduct } = useSelector((state) => state.addNewProduct);
 
-  const addNewProduct = () => {
+  // const addNewProduct = () => {
+  //   dispatch(
+  //     addNewProductProcess({
+  //       productCode: productCode,
+  //       productName: productName,
+  //       productPrice: productPrice,
+  //       productQuantity: productQuantity,
+  //       productImage: productImage,
+  //       productDescription: productDescription,
+  //       productPackageType: productPackageType,
+  //       productBarcode: productBarcode,
+  //       productAddress: productAddress,
+  //     })
+  //   );
+  //   dispatch(getAllProductsProcess());
+  // };
+
+  const handleUpdateProduct = (_id) => {
     dispatch(
-      addNewProductProcess({
-        productCode: productCode,
-        productName: productName,
-        productPrice: productPrice,
-        productQuantity: productQuantity,
-        productImage: productImage,
-        productDescription: productDescription,
-        productPackageType: productPackageType,
-        productBarcode: productBarcode,
-        productAddress: productAddress,
+      updateProductProcess({
+        _id,
+        productCode: sk,
+        productName: urunAdi,
+        productPrice: fiyat,
+        productDescription: aciklama,
+        productPackageType: paket,
+        productBarcode: barkod,
+        productAddress: adres,
+        productQuantity: adet,
       })
     );
-    dispatch(getAllProductsProcess());
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -132,12 +170,10 @@ const Stok = () => {
 
   useEffect(() => {
     dispatch(getAllProductsProcess());
+    return () => {
+      dispatch(resetAllProducts());
+    };
   }, []);
-
-  const handleProductDetail = (_id) => {
-    dispatch(getProductDetailProcess({ _id }));
-    setOpen(true); // Move this line to the function to open the modal
-  };
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col   ">
@@ -237,14 +273,14 @@ const Stok = () => {
                               <div className="flex justify-start items-center ">
                                 <Button
                                   variant="outlined"
-                                  onClick={() => handleEdit(productData._id)}
+                                  // onClick={() => handleEdit(productData._id)}
                                   className="md:mr-2 bg-blue-500 hover:bg-blue-800 text-white"
                                 >
                                   Düzenle
                                 </Button>
                                 <Button
                                   variant="outlined"
-                                  onClick={() => handleDelete(productData._id)}
+                                  // onClick={() => handleDelete(productData._id)}
                                 >
                                   Sil
                                 </Button>
@@ -277,17 +313,20 @@ const Stok = () => {
         open={open}
         handleClose={handleClose}
         handleOpen={handleOpen}
-        productName={ProductDetail?.productName}
-        productPrice={ProductDetail?.productPrice}
-        productQuantity={ProductDetail?.productQuantity}
+        productName={urunAdi}
+        productPrice={fiyat}
+        productQuantity={adet}
         productImage={ProductDetail?.productImage.data}
-        productDescription={ProductDetail?.productDescription}
-        productCode={ProductDetail?.productCode}
-        productAddress={ProductDetail?.productAddress}
-        productPackageType={ProductDetail?.productPackageType}
-        productBarcode={ProductDetail?.productBarcode}
+        productDescription={aciklama}
+        productCode={sk}
+        productAddress={adres}
+        productPackageType={paket}
+        productBarcode={barkod}
+        setUrunAdi={setUrunAdi}
+        updateProductInModal={handleUpdateProduct}
+        ProductDetail={ProductDetail}
       />
-      <AddingModal
+      {/* <AddingModal
         openAddingModal={openAddingModal}
         handleCloseAddingModal={handleAddingModalClose}
         addNewProduct={addNewProduct}
@@ -310,7 +349,7 @@ const Stok = () => {
         handleProductBarcodeChange={handleProductBarcodeChange}
         handleProductAddressChange={handleProductAddressChange}
         handleProductDescriptionChange={handleProductDescriptionChange}
-      />
+      /> */}
     </div>
   );
 };

@@ -59,26 +59,35 @@ const AddingModal = ({
         className="rounded-lg"
       >
         <Fade in={openAddingModal}>
-          <Box sx={style} className="rounded-lg g text-white pt-6 px">
+          <Box sx={style} className="rounded-lg  pt-6 ">
             <Form
               name="basic"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
-              style={{ maxWidth: 600 }}
+              style={{ maxWidth: 600, textDecorationColor: "white  " }}
               initialValues={{ remember: true }}
               onFinish={addNewProduct}
               onFinishFailed={onFinishFailed}
               autoComplete="off"
+              className="w-full"
             >
-              <Form.Item
-                label="Ürün Adı"
-                name="productName"
-                rules={[
-                  { required: true, message: "Lütfen ürün adını girin!" },
-                ]}
-              >
-                <Input value={productName} onChange={handleProductNameChange} />
-              </Form.Item>
+              <div className="flex w-full px-5">
+                <label className="text-white flex w-1/3">Ürün Adı</label>
+                <Form.Item
+                  name="productName"
+                  rules={[
+                    { required: true, message: "Lütfen ürün adını girin!" },
+                  ]}
+                  className="text-white w-full"
+                  style={{ color: "white" }}
+                >
+                  <Input
+                    value={productName}
+                    onChange={handleProductNameChange}
+                    className="w-full"
+                  />
+                </Form.Item>
+              </div>
 
               <Form.Item
                 label="Ürün Kodu"

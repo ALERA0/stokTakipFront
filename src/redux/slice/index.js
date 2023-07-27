@@ -1,4 +1,13 @@
-export {default as authSlice} from './auth-slice';
-export {default as getAllProductsSlice} from './get-all-products-slice';
-export {default as getProductDetailSlice} from './get-product-detail-slice'
-export {default as addNewProductSlice} from './add-new-product-slice'
+export { default as authSlice } from './auth-slice';
+export { default as getAllProductsSlice } from './get-all-products-slice';
+export { default as getProductDetailSlice } from './get-product-detail-slice'
+export { default as getAllOrdersSlice } from './get-all-orders-slice'
+export { default as getTedarikciOrdersSlice } from './get-tedarikci-orders-slice'
+export { default as getMusteriOrdersSlice } from './get-musteri-orders-slice'
+export { default as getOrderDetailSlice } from './get-order-detail-slice'
+export { default as getAllDocumentsSlice } from './get-all-documents-slice';
+export { default as getIncomingProductsSlice } from './get-incoming-products-slice';
+export { default as getOutgoingProductsSlice } from './get-outgoing-products-slice';
+export { default as addNewProductSlice } from './add-new-product-slice';
+export { default as updateProductSlice } from './update-product-slice';
+export { default as productDeleteSlice } from './delete-product-slice';

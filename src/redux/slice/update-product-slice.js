@@ -1,0 +1,29 @@
+import { updateProductProcess } from "../../api/index";
+import { createSlice } from "@reduxjs/toolkit";
+
+export const updateProductSlice = createSlice({
+    name: "productUpdate",
+    initialState: {
+        data: undefined,
+        status: undefined,
+        isLoading: false,
+    },
+    extraReducers: {
+        [updateProductProcess.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [updateProductProcess.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.data =
+                action.payload?.updatedProduct !== undefined
+                    ? action.payload?.updatedProduct
+                    : action.payload;
+            state.status = action.payload?.status;
+        },
+        [updateProductProcess.rejected]: (state) => {
+            state.isLoading = false;
+        }
+    },
+});
+
+export default updateProductSlice.reducer;
