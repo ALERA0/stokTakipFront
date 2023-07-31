@@ -1,9 +1,268 @@
-import React from 'react'
+import {
+  getAllDocumentsProcess,
+  getIncomingProductsProcess,
+  getOutgoingProductsProcess,
+} from "@/src/api";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import BelgeDetayModal from "./BelgeDetayModal";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import { Button } from "antd";
+
+const columns = [
+  {
+    id: "ozellik",
+    label: "Cari Türü",
+    minWidth: 110,
+    format: (value) =>
+      value === 1 ? "Ürün Giriş Belgesi" : "Ürün Çıkış Belgesi",
+    colorFormat: (value) => (value === 1 ? "red" : "green"),
+  },
+  {
+    id: "documentDate",
+    label: "Belge Tarihi ",
+    minWidth: 100,
+
+},
+  { id: "documentNumber", label: "Belge No", minWidth: 170 },
+  {
+    id: "description",
+    label: "Açıklama",
+    minWidth: 100,
+  },
+  {
+    id: "actions",
+    label: "İşlemler",
+    minWidth: 100,
+  },
+];
+
+const tabOptions = [
+  { id: "Hepsi", label: "Tüm Belgeler" },
+  { id: "Gelen", label: "Ürün Giriş Belgeleri" },
+  { id: "Giden", label: "Ürün Çıkış Belgeleri" },
+];
 
 const Belgeler = () => {
-  return (
-    <div>Belgeler</div>
-  )
-}
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [open, setOpen] = useState(false);
+  const [openAddingModal, setOpenAddingModal] = useState(false);
+  const dispatch = useDispatch();
+  const [selectedTab, setSelectedTab] = useState("Hepsi");
 
-export default Belgeler
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleAddingModalOpen = () => setOpenAddingModal(true);
+  const handleAddingModalClose = () => setOpenAddingModal(false);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  useEffect(() => {
+    dispatch(getAllDocumentsProcess());
+  }, []);
+
+  const handleIncomingProducts = () => {
+    dispatch(getIncomingProductsProcess());
+    setSelectedTab("Gelen");
+  };
+
+  const handleOutgoingProducts = () => {
+    dispatch(getOutgoingProductsProcess());
+    setSelectedTab("Giden");
+  };
+
+  const handleChangeTab = (tabId) => {
+    setSelectedTab(tabId);
+    // Seçilen tab değiştikçe, ilgili verileri güncelleyin veya filtreleyin.
+    if (tabId === "Gelen") {
+      handleIncomingProducts();
+    } else if (tabId === "Giden") {
+      handleOutgoingProducts();
+    } else {
+      dispatch(getAllDocumentsProcess());
+    }
+  };
+
+  const allDocuments = useSelector((state) => state.allDocuments.data);
+  const incomingProducts = useSelector(
+    (state) => state.getIncomingProducts.data
+  );
+  const outgoingProducts = useSelector(
+    (state) => state.getOutgoingProducts.data
+  );
+
+  let filteredData = [];
+  if (selectedTab === "Gelen") {
+    filteredData = incomingProducts;
+  } else if (selectedTab === "Giden") {
+    filteredData = outgoingProducts;
+  } else {
+    filteredData = allDocuments;
+  }
+
+  return (
+    <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col">
+      <div className="w-full flex justify-between items-center mb-6">
+        <h2 className="lg:text-2xl md:text-xl text-lg font-bold  flex justify-center">
+          Belgeler
+        </h2>
+        {/* Seçenekleri döngüyle oluşturun */}
+        <div className="flex gap-2">
+          {tabOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => handleChangeTab(option.id)}
+              className={`border px-4 py-2 rounded-lg ${
+                selectedTab === option.id ? "bg-blue-900 text-white" : ""
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth, font: "bold" }}
+                    className="text-xl font-bold"
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData &&
+                filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((documentData) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={documentData._id}
+                        // onClick={() => handleOrderDetail(documentData._id)}
+                        className="cursor-pointer"
+                      >
+                        {columns.map((column) => {
+                          const value = documentData[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "productImage" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {documentData.productImage?.data ? (
+                                    <div
+                                      style={{
+                                        maxWidth: "80px",
+                                        maxHeight: "100px",
+                                      }}
+                                    >
+                                      {column.render(documentData)}
+                                    </div>
+                                  ) : (
+                                    <div
+                                      style={{
+                                        maxWidth: "80px",
+                                        maxHeight: "100px",
+                                      }}
+                                    >
+                                      <Image
+                                        src={logo2}
+                                        alt="Logo"
+                                        layout="responsive"
+                                        width={80}
+                                        height={100}
+                                        objectFit="contain"
+                                        className="min-h-[40px]"
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              ) : column.id === "actions" ? (
+                                <div className="flex justify-start items-center ">
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() =>
+                                      deleteOrder(documentData._id)
+                                    }
+                                  >
+                                    Sil
+                                  </Button>
+                                </div>
+                              ) : column.format && typeof value === "number" ? (
+                                <span
+                                  style={{
+                                    color: column.colorFormat
+                                      ? column.colorFormat(value)
+                                      : "inherit",
+                                  }}
+                                >
+                                  {column.format(value)}
+                                </span>
+                              ) : (
+                                <span
+                                  style={{
+                                    color: column.colorFormat
+                                      ? column.colorFormat(value)
+                                      : "inherit",
+                                  }}
+                                >
+                                  {value}
+                                </span>
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={filteredData ? filteredData.length : 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </div>
+  );
+};
+
+export default Belgeler;
