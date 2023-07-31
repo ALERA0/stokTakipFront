@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -22,7 +22,7 @@ import Image from "next/image";
 import CariAddingModal from "./CariAddingModal";
 import CariDetayModal from "./CariDetayModal";
 import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 const columns = [
   {
@@ -49,9 +49,9 @@ const columns = [
 ];
 
 const tabOptions = [
-  { id: 'Hepsi', label: 'Hepsi' },
-  { id: 'Musteri', label: 'Müşteri' },
-  { id: 'Tedarikci', label: 'Tedarikçi' },
+  { id: "Hepsi", label: "Hepsi" },
+  { id: "Musteri", label: "Müşteri" },
+  { id: "Tedarikci", label: "Tedarikçi" },
   // Daha fazla seçenek ekleyebilirsiniz...
 ];
 
@@ -62,10 +62,13 @@ const CariComp = () => {
   const [openAddingModal, setOpenAddingModal] = useState(false);
   const dispatch = useDispatch();
 
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   const handleOrderDetail = (_id) => {
     dispatch(getOrderDetailProcess({ _id }));
     setOpen(true);
-    console.log(OrderDetail, "ASŞDLKHASKPJDHASJDHASOLJKHDSAKJ");
   };
 
   const { data: OrderDetail } = useSelector((state) => state.orderDetail);
@@ -83,17 +86,22 @@ const CariComp = () => {
     };
   }, []);
 
-  const handleMusteriOrders = () => {
-    dispatch(getMusteriOrdersProcess());
-    setSelectedTab('Musteri');
-    console.log(selectedTab,"agkjhskjsakjaskjasldkjaslkjdhlkasjhdlkjashdlkjashkldjahslkjdashlkjashkd")
+  const handleMusteriOrders = async () => {
+    try {
+      await dispatch(getMusteriOrdersProcess());
+      setSelectedTab('Musteri');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleTedarikciOrders = () => {
-    dispatch(getTedarikciOrdersProcess());
-    setSelectedTab('Tedarikci')
-    console.log(selectedTab,"agkjhskjsakjaskjasldkjaslkjdhlkasjhdlkjashdlkjashkldjahslkjdashlkjashkd")
-
+  const handleTedarikciOrders = async () => {
+    try {
+      await dispatch(getTedarikciOrdersProcess());
+      setSelectedTab('Tedarikci');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const { data: AllOrderData } = useSelector((state) => state.getAllOrders);
@@ -135,10 +143,6 @@ const CariComp = () => {
     setPage(newPage);
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
@@ -168,6 +172,21 @@ const CariComp = () => {
     }
   };
 
+  // Örnek tablo verileri:
+  const allOrders = useSelector((state) => state.getAllOrders.data);
+  const musteriOrders = useSelector((state) => state.getMusteriOrders.data);
+  const tedarikciOrders = useSelector((state) => state.getTedarikciOrders.data);
+
+  // Hangi tab seçiliyse, ona göre verileri filtrele:
+  let filteredData = [];
+  if (selectedTab === 'Musteri') {
+    filteredData = musteriOrders;
+  } else if (selectedTab === 'Tedarikci') {
+    filteredData = tedarikciOrders;
+  } else {
+    filteredData = allOrders;
+  }
+
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col">
       <div className="w-full flex justify-between items-center mb-6">
@@ -181,7 +200,7 @@ const CariComp = () => {
               key={option.id}
               onClick={() => handleChangeTab(option.id)}
               className={`border px-4 py-2 rounded-lg ${
-                selectedTab === option.id ? 'bg-blue-900 text-white' : ''
+                selectedTab === option.id ? "bg-blue-900 text-white" : ""
               }`}
             >
               {option.label}
@@ -220,14 +239,8 @@ const CariComp = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {AllOrderData &&
-                AllOrderData
-                  .filter((orderData) => {
-                    // Eğer 'Hepsi' sekmesi seçiliyse tüm verileri göster
-                    if (selectedTab === 'Hepsi') return true;
-                    // Aksi durumda, seçilen tab'a göre filtrele
-                    return orderData.ozellik === selectedTab;
-                  })
+              {filteredData &&
+                filteredData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((orderData) => {
                     return (
@@ -307,14 +320,7 @@ const CariComp = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={
-            AllOrderData
-              ? AllOrderData.filter((orderData) => {
-                  if (selectedTab === 'Hepsi') return true;
-                  return orderData.ozellik === selectedTab;
-                }).length
-              : 0
-          }
+          count={filteredData ? filteredData.length : 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
