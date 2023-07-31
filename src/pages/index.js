@@ -1,10 +1,4 @@
 import Head from "next/head";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { loginProcess } from "../api";
-import { useRouter } from "next/router";
-import { checkSignedIn } from "../redux/slice/auth-slice";
-import { Alert } from "antd";
 import Stok from "../components/Home/Stok/Stok";
 
 export default function Home() {

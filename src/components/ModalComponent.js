@@ -6,6 +6,11 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { Button, Input } from "antd";
 import { TextareaAutosize } from "@mui/material";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getAllProductsProcess, updateProductProcess } from "../api";
+import { resetAllProducts } from "../redux/slice/get-all-products-slice";
 
 const style = {
   position: "absolute",
@@ -20,30 +25,63 @@ const style = {
 };
 
 const ModalComponent = ({
-  handleOpen,
   open,
   handleClose,
-  setOpen,
-  productName,
-  productCode,
-  productImage,
-  productQuantity,
-  productPrice,
-  productPackageType,
-  productBarcode,
-  productAddress,
-  productDescription,
-  setUrunAdi,
-  updateProductInModal,
-  ProductDetail
+  ProductDetail,
 }) => {
-  const handleSave = () => {
-    updateProductInModal(ProductDetail?._id); // ModalComponent'in içinde doğru kullanım
+  
+
+  const [urunAdi, setUrunAdi] = useState("");
+  const [sk, setSK] = useState("");
+  const [fiyat, setFiyat] = useState("");
+  const [barkod, setBarkod] = useState("");
+  const [aciklama, setAciklama] = useState("");
+  const [adres, setAdres] = useState("");
+  const [paket, setPaket] = useState("");
+  const [adet, setAdet] = useState("");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (ProductDetail) {
+      setUrunAdi(ProductDetail.productName);
+      setSK(ProductDetail.productCode);
+      setFiyat(ProductDetail.productPrice.toString());
+      setBarkod(ProductDetail.productBarcode);
+      setAciklama(ProductDetail.productDescription);
+      setAdres(ProductDetail.productAddress);
+      setPaket(ProductDetail.productPackageType);
+      setAdet(ProductDetail.productQuantity);
+    }
+  }, [ProductDetail]);
+
+  const handleUpdateProduct = (_id) => {
+    dispatch(
+      updateProductProcess({
+        _id,
+        productCode: sk,
+        productName: urunAdi,
+        productPrice: fiyat,
+        productDescription: aciklama,
+        productPackageType: paket,
+        productBarcode: barkod,
+        productAddress: adres,
+        productQuantity: adet,
+      })
+    )
+      .then(() => {
+        console.log("Ürün başarıyla güncellendi.");
+        dispatch(getAllProductsProcess());
+      })
+      .catch((error) => {
+        console.error("Ürün güncelleme hatası:", error);
+      });
   };
-  console.log(
-    productName,
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-  );
+
+  const updateProduct = () => {
+    handleUpdateProduct(ProductDetail?._id);
+    handleClose();
+  };
+
   return (
     <div>
       <Modal
@@ -72,7 +110,7 @@ const ModalComponent = ({
                 Ürün İsmi :
               </label>
               <Input
-                defaultValue={productName}
+                value={urunAdi}
                 onChange={(e) => setUrunAdi(e.target.value)}
                 className="w-3/5"
               />
@@ -83,9 +121,9 @@ const ModalComponent = ({
               component="h2"
               className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              {productImage && (
+              {ProductDetail?.productImage && (
                 <img
-                  src={`data:image/jpeg;base64,${productImage}`}
+                  src={`data:image/jpeg;base64,${ProductDetail.productImage.data}`}
                   alt="Ürün Resmi"
                   style={{ maxWidth: "150px", maxHeight: "150px" }}
                   className="mx-auto"
@@ -101,7 +139,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Kodu :
               </label>
-              <Input defaultValue={productCode} className="w-3/5" />
+              <Input value={sk} className="w-3/5" onChange={(e) => setSK(e.target.value)} />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -112,7 +150,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Adeti :
               </label>
-              <Input defaultValue={productQuantity} className="w-3/5" />
+              <Input value={adet} className="w-3/5" readOnly />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -123,7 +161,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Fiyatı :
               </label>
-              <Input defaultValue={productPrice} className="w-3/5" />
+              <Input value={fiyat} className="w-3/5" onChange={(e) => setFiyat(e.target.value)} />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -134,7 +172,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Paket Türü :
               </label>
-              <Input defaultValue={productPackageType} className="w-3/5" />
+              <Input value={paket} className="w-3/5" onChange={(e) => setPaket(e.target.value)} />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -145,7 +183,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Barkod No :
               </label>
-              <Input defaultValue={productBarcode} className="w-3/5" />
+              <Input value={barkod} className="w-3/5" onChange={(e) => setBarkod(e.target.value)}/>
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -156,7 +194,7 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Raf Adresi :
               </label>
-              <Input defaultValue={productAddress} className="w-3/5" />
+              <Input value={adres} className="w-3/5" onChange={(e) => setAdres(e.target.value)} />
             </Typography>
             <Typography
               id="transition-modal-description"
@@ -166,16 +204,13 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Açıklama :
               </label>
-              <TextareaAutosize
-                defaultValue={productDescription}
-                className="w-3/5"
-              />
+              <TextareaAutosize value={aciklama} className="w-3/5" onChange={(e) => setAciklama(e.target.value)} />
             </Typography>
             <div className="w-full flex justify-end mt-4">
               <Button
                 type="primary"
                 className="bg-blue-700"
-                onClick={handleSave}
+                onClick={updateProduct}
               >
                 Kaydet
               </Button>

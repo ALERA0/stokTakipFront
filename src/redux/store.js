@@ -20,6 +20,12 @@ import {
   addNewProductSlice,
   updateProductSlice,
   productDeleteSlice,
+  addIncomingProductSlice,
+  deleteOrderSlice,
+  updateOrderSlice,
+  getIncomingProductDetailSlice,
+  getOutgoingProductDetailSlice,
+  updateIncomingProductQuantitySlice,
 } from './slice';
 
 
@@ -30,13 +36,21 @@ const reducer = combineReducers({
   getAllOrders: getAllOrdersSlice,
   getTedarikciOrders: getTedarikciOrdersSlice,
   getMusteriOrders: getMusteriOrdersSlice,
-  getOrderDetail: getOrderDetailSlice,
+  orderDetail: getOrderDetailSlice,
   allDocuments: getAllDocumentsSlice,
   getIncomingProducts: getIncomingProductsSlice,
   getOutgoingProducts: getOutgoingProductsSlice,
   addNewProduct: addNewProductSlice,
   updateProduct: updateProductSlice,
   productDelete: productDeleteSlice,
+  addIncomingProduct: addIncomingProductSlice,
+  deleteOrder: deleteOrderSlice,
+  updateOrder: updateOrderSlice,
+  incomingProductdetail: getIncomingProductDetailSlice,
+  outgoingProductdetail: getOutgoingProductDetailSlice,
+  updateIncomingProductQuantity: updateIncomingProductQuantitySlice,
+  
+
 
 
 });

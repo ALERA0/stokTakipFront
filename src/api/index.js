@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api/';
+const API_BASE_URL = 'https://stok-takipp.onrender.com/api/';
 // const API_KEY = 'SSVa97j7z83nMXDzhmmdHSSLPG9NueDf3J6BgCSS';
 
 axios.defaults.baseURL = API_BASE_URL;
@@ -224,8 +225,124 @@ const addNewOrderProcess = createAsyncThunk(
   }
 );
 
+const addIncomingProductProcess = createAsyncThunk(
+  "addIncomingProduct/addIncomingProductProcess",
+  async (data) => {
+    const {
+      documentNumber,
+      order,
+      description,
+    } = data;
+    const params = new FormData();
+    params.append("documentNumber", documentNumber);
+    params.append("order", order);
+    params.append("description", description);
+    try {
+      const res = await axios.post("addIncomingProduct", params);
+      return res.data
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+const deleteOrderProcess = createAsyncThunk(
+  "deleteOrder/deleteOrderProcess",
+  async (data) => {
+    const { _id } = data;
+    const params = new FormData();
+    params.append("_id", _id);
+    const res = await axios.post("deleteOrder", params);
+    return res.data;
+  }
+);
+
+const getIncomingTransactionsProcess = createAsyncThunk(
+  "listTransactions/getIncomingTransactionsProcess",
+  async (data) => {
+    const { _id } = data;
+    const params = new FormData();
+    params.append("_id", _id);
+    const res = await axios.post("listTransactions", params);
+    return res.data;
+  }
+);
+
+const updateOrderProcess = createAsyncThunk(
+  "updateOrder/updateOrderProcess",
+  async (data) => {
+    const {
+      _id,
+      tcNumber,
+      isim,
+      email,
+      telefon,
+      adres,
+      ozellik,
+
+    } = data;
+    const params = new FormData();
+    params.append("_id", _id);
+    params.append("tcNumber", tcNumber);
+    params.append("isim", isim);
+    params.append("email", email);
+    params.append("telefon", telefon);
+    params.append("adres", adres);
+    params.append("ozellik", ozellik);
+    try {
+      const res = await axios.post("updateOrder", params);
+      return res.data
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+const getIncomingProductDetailProcess = createAsyncThunk(
+  "incomingProductdetail/getIncomingProductDetailProcess",
+  async (data) => {
+    const { incomingProductId } = data;
+    const params = new FormData();
+    params.append("incomingProductId", incomingProductId);
+    const res = await axios.post("incomingProductdetail", params);
+    return res.data;
+  }
+);
+
+const getOutgoingProductDetailProcess = createAsyncThunk(
+  "outgoingProductdetail/getOutgoingProductDetailProcess",
+  async (data) => {
+    const { outgoingProductId } = data;
+    const params = new FormData();
+    params.append("outgoingProductId", outgoingProductId);
+    const res = await axios.post("outgoingProductdetail", params);
+    return res.data;
+  }
+);
+
+const updateIncomingProductQuantityProcess = createAsyncThunk(
+  "updateIncomingProductQuantity/updateIncomingProductQuantityProcess",
+  async (data) => {
+    const {
+      incomingProductId,
+      rowId,
+      newQuantity,
 
 
+    } = data;
+    const params = new FormData();
+    params.append("incomingProductId", incomingProductId);
+    params.append("rowId", rowId);
+    params.append("newQuantity", newQuantity);
+
+    try {
+      const res = await axios.post("updateIncomingProductQuantity", params);
+      return res.data
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 export {
   authLogin,
@@ -243,7 +360,13 @@ export {
   updateProductProcess,
   addNewOrderProcess,
   productDeleteProcess,
-
+  addIncomingProductProcess,
+  deleteOrderProcess,
+  getIncomingTransactionsProcess,
+  updateOrderProcess,
+  getIncomingProductDetailProcess,
+  getOutgoingProductDetailProcess,
+  updateIncomingProductQuantityProcess,
 
 
 };

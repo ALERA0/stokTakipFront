@@ -11,3 +11,9 @@ export { default as getOutgoingProductsSlice } from './get-outgoing-products-sli
 export { default as addNewProductSlice } from './add-new-product-slice';
 export { default as updateProductSlice } from './update-product-slice';
 export { default as productDeleteSlice } from './delete-product-slice';
+export { default as addIncomingProductSlice } from './add-incoming-product-slice';
+export { default as deleteOrderSlice } from './delete-order-slice';
+export { default as updateOrderSlice } from './update-order-slice';
+export { default as getIncomingProductDetailSlice } from './get-incoming-product-detail-slice'
+export { default as getOutgoingProductDetailSlice } from './get-outgoing-product-detail-slice'
+export { default as updateIncomingProductQuantitySlice } from './update-product-quantity-slice'

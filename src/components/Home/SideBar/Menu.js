@@ -47,7 +47,7 @@ const Menu = () => {
           <MenuLink src={Folder} menuTitle={"Belgeler"} open={open} href={"/"} />
           <MenuLink src={order} menuTitle={"Ürün Girişi"} open={open} href={"/"}/>
           <MenuLink src={product} menuTitle={"Ürün çıkışı"} open={open} href={"/"}/>
-          <MenuLink src={supplier} menuTitle={"Cari"} open={open} href={"/"}/>
+          <MenuLink src={supplier} menuTitle={"Cari"} open={open} href={"/cari"}/>
         </ul>
       </div>
     </div>

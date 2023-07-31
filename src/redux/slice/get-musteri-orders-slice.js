@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {getMusteriOrdersProcess} from '../../api';
 export const getMusteriOrdersSlice = createSlice({
-  name: 'getProductDetail',
+  name: 'getMusteriOrders',
   initialState: {
     isLoading: {},
     status: {},
