@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import axios from 'axios';
 
-const API_BASE_URL = 'https://stok-takipp.onrender.com/api/';
+const API_BASE_URL = 'http://localhost:5000/api/';
 // const API_KEY = 'SSVa97j7z83nMXDzhmmdHSSLPG9NueDf3J6BgCSS';
 
 axios.defaults.baseURL = API_BASE_URL;
