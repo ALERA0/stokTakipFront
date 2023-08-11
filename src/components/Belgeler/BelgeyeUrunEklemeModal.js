@@ -1,20 +1,19 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { Button, Input, TextareaAutosize } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Button, Input } from "antd";
 import { useDispatch } from "react-redux";
 import {
+  addIncomingProductToIncomingProductProcess,
+  addIncomingProductToOutgoingProductProcess,
+  getAllProductsProcess,
   getIncomingProductDetailProcess,
   getOutgoingProductDetailProcess,
-  updateIncomingDocProductQuantityProcess,
-  updateOutgoingDocProductQuantityProcess,
 } from "@/src/api";
-import { resetIncomingProductDetail } from "@/src/redux/slice/get-incoming-product-detail-slice";
-import { resetOutgoingProductDetail } from "@/src/redux/slice/get-outgoing-product-detail-slice";
+import { useRouter } from "next/router";
 
 const style = {
   position: "absolute",
@@ -28,72 +27,88 @@ const style = {
   p: 4,
 };
 
-const BelgeUrunDetayModal = ({
-  open,
-  handleClose,
-  productData,
-  isGelen,
-  data,
+function decryptData(encryptedData) {
+  const decryptedData = atob(encryptedData);
+  return decryptedData;
+}
+
+const BelgeyeUrunEklemeModal = ({
+  openBelgedenGelenModal,
+  handleCloseBelgedenGelenModalOpen,
+  ProductDetail,
 }) => {
-  const dispatch = useDispatch();
   const [productCode, setProductCode] = useState("");
   const [productName, setProductName] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  const handleUpdateProductQuantity = async () => {
-    console.log(data._id, "HKJASSKLJHASLHKDASKJHDASKHJLADHKJL");
-    console.log(productData._id, "HKJASSKLJHASLHKDASKJHDASKHJLADHKJL");
-
-    if (isGelen) {
-      await dispatch(
-        updateIncomingDocProductQuantityProcess({
-          incomingProductId: data._id,
-          rowId: productData._id,
-          newQuantity: quantity,
-        })
-      );
-    } else {
-      await dispatch(
-        updateOutgoingDocProductQuantityProcess({
-          outgoingProductId: data._id,
-          rowId: productData._id,
-          newQuantity: quantity,
-        })
-      );
-    }
-
-    if (isGelen) {
-      await dispatch(
-        getIncomingProductDetailProcess({ incomingProductId: data?._id })
-      );
-    } else {
-      await dispatch(
-        getOutgoingProductDetailProcess({ outgoingProductId: data?._id })
-      );
-    }
-
-    handleClose();
-  };
+  const pageStok = router.query.a1;
+  const decryptedPageStok = decryptData(pageStok ? pageStok : null);
+  const documentId = router.query.a2;
+  const decryptedDocumentId = decryptData(documentId ? documentId : null);
 
   useEffect(() => {
-    if (productData) {
-      setProductCode(productData.productCode);
-      setProductName(productData.productName);
-      setProductQuantity(productData.productQuantity.toString());
-      setProductDescription(productData.productDescription);
-      setQuantity(productData.quantity.toString());
+    if (ProductDetail) {
+      setProductCode(ProductDetail.productCode);
+      setProductName(ProductDetail.productName);
+      setProductQuantity(ProductDetail.productQuantity.toString());
+      setProductDescription(ProductDetail.productDescription);
+      //   setQuantity(productData.quantity.toString());
     }
-  }, [productData]);
+  }, [ProductDetail]);
 
+  const handleAddProductToDocument = async () => {
+    console.log(decryptedPageStok, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    console.log(decryptedDocumentId, "DOC IDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+    if (decryptedPageStok == 1) {
+      console.log("pageSTOK 1111111");
+      await dispatch(
+        addIncomingProductToIncomingProductProcess({
+          incomingProductId: decryptedDocumentId,
+          productId: ProductDetail._id,
+          productQuantity: quantity,
+        })
+      );
+      await dispatch(getAllProductsProcess());
+      handleCloseBelgedenGelenModalOpen();
+      await dispatch(
+        getIncomingProductDetailProcess({
+          incomingProductId: decryptedDocumentId,
+        })
+      );
+    } else if (decryptedPageStok == 2) {
+      console.log("pageSTOK 22222222222");
+
+      await dispatch(
+        addIncomingProductToOutgoingProductProcess({
+          outgoingProductId: decryptedDocumentId,
+          productId: ProductDetail._id,
+          productQuantity: quantity,
+        })
+      );
+      await dispatch(getAllProductsProcess());
+      handleCloseBelgedenGelenModalOpen();
+      await dispatch(
+        getOutgoingProductDetailProcess({
+          outgoingProductId: decryptedDocumentId,
+        })
+      );
+    }
+
+    // router.push("/belgeDetay");
+
+    setQuantity(null);
+  };
   return (
     <div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
+        open={openBelgedenGelenModal}
+        onClose={handleCloseBelgedenGelenModalOpen}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -101,7 +116,7 @@ const BelgeUrunDetayModal = ({
         }}
         className="rounded-lg"
       >
-        <Fade in={open}>
+        <Fade in={openBelgedenGelenModal}>
           <Box sx={style} className="rounded-lg g text-white pt-6 px">
             <Typography
               variant="h6"
@@ -123,7 +138,7 @@ const BelgeUrunDetayModal = ({
               className="mb-4 gap-2 text-2xl font-bold justify-center text-center flex w-full"
             >
               <label className="text-lg text-white font-bold text-center w-2/5 flex justify-end">
-                Belgedeki Adedi:
+                Ürün Adedi:
               </label>
               <Input
                 value={quantity}
@@ -149,7 +164,7 @@ const BelgeUrunDetayModal = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleUpdateProductQuantity()}
+                onClick={handleAddProductToDocument}
                 type="primary"
               >
                 Kaydet
@@ -157,7 +172,7 @@ const BelgeUrunDetayModal = ({
               <Button
                 variant=""
                 color="primary"
-                onClick={handleClose}
+                onClick={handleCloseBelgedenGelenModalOpen}
                 type="primary"
                 className="font-bold"
               >
@@ -171,4 +186,4 @@ const BelgeUrunDetayModal = ({
   );
 };
 
-export default BelgeUrunDetayModal;
+export default BelgeyeUrunEklemeModal;

@@ -1,7 +1,7 @@
-import { updateIncomingProductQuantityProcess } from "../../api/index";
+import { updateIncomingDocProductQuantityProcess } from "../../api/index";
 import { createSlice } from "@reduxjs/toolkit";
 
-export const updateIncomingProductQuantitySlice = createSlice({
+export const updateIncomingDocProductQuantitySlice = createSlice({
     name: "updateIncomingProductQuantity",
     initialState: {
         data: undefined,
@@ -9,10 +9,10 @@ export const updateIncomingProductQuantitySlice = createSlice({
         isLoading: false,
     },
     extraReducers: {
-        [updateIncomingProductQuantityProcess.pending]: (state) => {
+        [updateIncomingDocProductQuantityProcess.pending]: (state) => {
             state.isLoading = true;
         },
-        [updateIncomingProductQuantityProcess.fulfilled]: (state, action) => {
+        [updateIncomingDocProductQuantityProcess.fulfilled]: (state, action) => {
             state.isLoading = false;
             state.data =
                 action.payload?.data !== undefined
@@ -20,10 +20,10 @@ export const updateIncomingProductQuantitySlice = createSlice({
                     : action.payload;
             state.status = action.payload?.status;
         },
-        [updateIncomingProductQuantityProcess.rejected]: (state) => {
+        [updateIncomingDocProductQuantityProcess.rejected]: (state) => {
             state.isLoading = false;
         }
     },
 });
 
-export default updateIncomingProductQuantitySlice.reducer;
+export default updateIncomingDocProductQuantitySlice.reducer;

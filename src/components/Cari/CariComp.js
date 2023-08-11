@@ -61,14 +61,26 @@ const CariComp = () => {
   const [open, setOpen] = React.useState(false);
   const [openAddingModal, setOpenAddingModal] = useState(false);
   const dispatch = useDispatch();
+  const [isDeleteAction, setIsDeleteAction] = useState(false);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
+  const deleteOrder = async (_id) => {
+    try {
+      await dispatch(deleteOrderProcess({ _id }));
+      await dispatch(getAllOrdersProcess());
+      // setIsDeleteAction(false); // Silme işlemi tamamlandı
+    } catch (error) {
+      // Silme işlemi hata aldı, yine sıfırlayın
+      console.log(error);
+    }
+  };
+
   const handleOrderDetail = (_id) => {
     dispatch(getOrderDetailProcess({ _id }));
-    setOpen(true);
+    setOpen(true); // Detayları görmek için modalı aç
   };
 
   const { data: OrderDetail } = useSelector((state) => state.orderDetail);
@@ -89,7 +101,7 @@ const CariComp = () => {
   const handleMusteriOrders = async () => {
     try {
       await dispatch(getMusteriOrdersProcess());
-      setSelectedTab('Musteri');
+      setSelectedTab("Musteri");
     } catch (error) {
       console.log(error);
     }
@@ -98,7 +110,7 @@ const CariComp = () => {
   const handleTedarikciOrders = async () => {
     try {
       await dispatch(getTedarikciOrdersProcess());
-      setSelectedTab('Tedarikci');
+      setSelectedTab("Tedarikci");
     } catch (error) {
       console.log(error);
     }
@@ -125,8 +137,8 @@ const CariComp = () => {
   const handleAddingModalOpen = () => setOpenAddingModal(true);
   const handleAddingModalClose = () => setOpenAddingModal(false);
 
-  const addNewOrder = () => {
-    dispatch(
+  const addNewOrder = async () => {
+    await dispatch(
       addNewOrderProcess({
         tcNumber: tcNumber,
         isim: isim,
@@ -136,7 +148,8 @@ const CariComp = () => {
         ozellik: ozellik,
       })
     );
-    dispatch(getAllOrdersProcess());
+    await dispatch(getAllOrdersProcess());
+    handleAddingModalClose();
   };
 
   const handleChangePage = (event, newPage) => {
@@ -148,24 +161,14 @@ const CariComp = () => {
     setPage(0);
   };
 
-  const deleteOrder = async (_id) => {
-    try {
-      await dispatch(deleteOrderProcess({ _id }));
-      await dispatch(getAllOrdersProcess());
-      setOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const [selectedTab, setSelectedTab] = useState('Hepsi');
+  const [selectedTab, setSelectedTab] = useState("Hepsi");
 
   const handleChangeTab = (tabId) => {
     setSelectedTab(tabId);
     // Seçilen tab değiştikçe, ilgili verileri güncelleyin veya filtreleyin.
-    if (tabId === 'Musteri') {
+    if (tabId === "Musteri") {
       handleMusteriOrders();
-    } else if (tabId === 'Tedarikci') {
+    } else if (tabId === "Tedarikci") {
       handleTedarikciOrders();
     } else {
       dispatch(getAllOrdersProcess());
@@ -179,9 +182,9 @@ const CariComp = () => {
 
   // Hangi tab seçiliyse, ona göre verileri filtrele:
   let filteredData = [];
-  if (selectedTab === 'Musteri') {
+  if (selectedTab === "Musteri") {
     filteredData = musteriOrders;
-  } else if (selectedTab === 'Tedarikci') {
+  } else if (selectedTab === "Tedarikci") {
     filteredData = tedarikciOrders;
   } else {
     filteredData = allOrders;
@@ -295,10 +298,13 @@ const CariComp = () => {
                                   </span>
                                 </div>
                               ) : column.id === "actions" ? (
-                                <div className="flex justify-start items-center ">
+                                <div className="flex relative z-20 justify-start items-center ">
                                   <Button
                                     variant="outlined"
-                                    onClick={() => deleteOrder(orderData._id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation(); 
+                                      deleteOrder(orderData._id);
+                                    }}
                                   >
                                     Sil
                                   </Button>

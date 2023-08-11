@@ -45,8 +45,8 @@ const Menu = () => {
         <ul className="pt-6">
           <MenuLink src={Chart_fill} menuTitle={"Ürün Stoğu"} open={open} href={"/"} />
           <MenuLink src={Folder} menuTitle={"Belgeler"} open={open} href={"/belgeler"} />
-          <MenuLink src={order} menuTitle={"Ürün Girişi"} open={open} href={"/"}/>
-          <MenuLink src={product} menuTitle={"Ürün çıkışı"} open={open} href={"/"}/>
+          <MenuLink src={order} menuTitle={"Ürün Girişi"} open={open} href={"/urunGiris"}/>
+          <MenuLink src={product} menuTitle={"Ürün çıkışı"} open={open} href={"/urunCikis"}/>
           <MenuLink src={supplier} menuTitle={"Cari"} open={open} href={"/cari"}/>
         </ul>
       </div>

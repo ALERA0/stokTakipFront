@@ -2,6 +2,7 @@ import {
   getAllDocumentsProcess,
   getIncomingProductDetailProcess,
   getIncomingProductsProcess,
+  getIncomingTransactionsProcess,
   getOutgoingProductDetailProcess,
   getOutgoingProductsProcess,
 } from "@/src/api";
@@ -21,6 +22,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { resetIncomingProductDetail } from "@/src/redux/slice/get-incoming-product-detail-slice";
 import { resetOutgoingProductDetail } from "@/src/redux/slice/get-outgoing-product-detail-slice";
+import add from "../../../public/images/add.png";
+import Image from "next/image";
+import BelgeSecmeModal from "./BelgeSecmeModal";
 
 const columns = [
   {
@@ -55,6 +59,11 @@ const tabOptions = [
   { id: "Giden", label: "Ürün Çıkış Belgeleri" },
 ];
 
+function decryptData(encryptedData) {
+  const decryptedData = atob(encryptedData);
+  return decryptedData;
+}
+
 const Belgeler = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -62,10 +71,11 @@ const Belgeler = () => {
   const [openAddingModal, setOpenAddingModal] = useState(false);
   const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState("Hepsi");
+  const [belgeModal, setBelgeModal] = useState(false);
   const router = useRouter();
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setBelgeModal(false);
   const handleAddingModalOpen = () => setOpenAddingModal(true);
   const handleAddingModalClose = () => setOpenAddingModal(false);
 
@@ -115,14 +125,29 @@ const Belgeler = () => {
   const outgoingProducts = useSelector(
     (state) => state.getOutgoingProducts.data
   );
+  const pageStok = router.query.a1;
+  const decryptedPageStok = decryptData(pageStok ? pageStok : null);
+  const documentId = router.query.a2;
+  const decryptedDocumentId = decryptData(documentId ? documentId : null);
 
   let filteredData = [];
-  if (selectedTab === "Gelen") {
-    filteredData = incomingProducts;
-  } else if (selectedTab === "Giden") {
-    filteredData = outgoingProducts;
+
+  useEffect(() => {
+    dispatch(getIncomingTransactionsProcess({ _id: decryptedDocumentId }));
+  }, [decryptedDocumentId]);
+
+  const listTransactions = useSelector((state) => state.listTransactions.data);
+
+  if (decryptedPageStok == 3) {
+    filteredData = listTransactions;
   } else {
-    filteredData = allDocuments;
+    if (selectedTab === "Gelen") {
+      filteredData = incomingProducts;
+    } else if (selectedTab === "Giden") {
+      filteredData = outgoingProducts;
+    } else {
+      filteredData = allDocuments;
+    }
   }
 
   const handleDocumentDetail = (_id, ozellik) => {
@@ -139,9 +164,25 @@ const Belgeler = () => {
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col">
       <div className="w-full flex justify-between items-center mb-6">
-        <h2 className="lg:text-2xl md:text-xl text-lg font-bold  flex justify-center">
-          Belgeler
-        </h2>
+        <div className="flex gap-2">
+          <h2 className="lg:text-2xl md:text-xl text-lg font-bold  flex justify-center">
+            Belgeler
+          </h2>
+          <div
+            className="flex lg:gap-3 md:gap-2 gap-1 bg-blue-900 hover:bg-blue-700 text-white duration-500 py-1 px-2 rounded-lg ml-2 cursor-pointer"
+            onClick={() => setBelgeModal(true)}
+          >
+            <Image
+              src={add}
+              alt="Ürün Ekle"
+              className="cursor-pointer flex justify-center items-center my-auto"
+              width={25}
+            />
+            <h2 className="lg:text-xl md:text-lg text-xs flex justify-center items-center my-auto">
+              Yeni Belge Oluştur
+            </h2>
+          </div>
+        </div>
         {/* Seçenekleri döngüyle oluşturun */}
         <div className="flex gap-2">
           {tabOptions.map((option) => (
@@ -236,9 +277,9 @@ const Belgeler = () => {
                                 <div className="flex justify-start items-center ">
                                   <Button
                                     variant="outlined"
-                                    onClick={() =>
-                                      deleteOrder(documentData._id)
-                                    }
+                                    // onClick={() =>
+                                    //   deleteOrder(documentData._id)
+                                    // }
                                   >
                                     Sil
                                   </Button>
@@ -283,6 +324,7 @@ const Belgeler = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <BelgeSecmeModal open={belgeModal} handleClose={handleClose} />
     </div>
   );
 };

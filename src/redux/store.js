@@ -22,17 +22,26 @@ import {
   productDeleteSlice,
   addIncomingProductSlice,
   deleteOrderSlice,
+  getIncomingTransactionsSlice,
   updateOrderSlice,
   getIncomingProductDetailSlice,
   getOutgoingProductDetailSlice,
-  updateIncomingProductQuantitySlice,
+  deleteProductFromIncomingProductSlice,
+  deleteProductFromOutgoingProductSlice,
+  updateIncomingDocProductQuantitySlice,
+  updateOutgoingDocProductQuantitySlice,
+  addIncomingProductToIncomingProductSlice,
+  addOutgoingProductSlice,
+  addIncomingProductToOutgoingProductSlice,
+  updateOutgoingDocSlice,
+  updateIncomingDocSlice,
 } from './slice';
 
 
 const reducer = combineReducers({
   auth: authSlice,
   getAllProducts: getAllProductsSlice,
-  getProductDetail: getProductDetailSlice,
+  productDetail: getProductDetailSlice,
   getAllOrders: getAllOrdersSlice,
   getTedarikciOrders: getTedarikciOrdersSlice,
   getMusteriOrders: getMusteriOrdersSlice,
@@ -44,13 +53,20 @@ const reducer = combineReducers({
   updateProduct: updateProductSlice,
   productDelete: productDeleteSlice,
   addIncomingProduct: addIncomingProductSlice,
+  addOutgoingProduct: addOutgoingProductSlice,
   deleteOrder: deleteOrderSlice,
+  listTransactions: getIncomingTransactionsSlice,
   updateOrder: updateOrderSlice,
   incomingProductdetail: getIncomingProductDetailSlice,
   outgoingProductdetail: getOutgoingProductDetailSlice,
-  updateIncomingProductQuantity: updateIncomingProductQuantitySlice,
-  
-
+  updateIncomingProductQuantity: updateIncomingDocProductQuantitySlice,
+  updateOutgoingProductQuantity: updateOutgoingDocProductQuantitySlice,
+  removeProduct: deleteProductFromIncomingProductSlice,
+  removeOutgoingProduct: deleteProductFromOutgoingProductSlice,
+  addProductToIncomingProduct: addIncomingProductToIncomingProductSlice,
+  addProductToOutgoingProduct: addIncomingProductToOutgoingProductSlice,
+  updateOutgoingProduct: updateOutgoingDocSlice,
+  updateIncomingProduct: updateIncomingDocSlice,
 
 
 });

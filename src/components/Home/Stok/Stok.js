@@ -23,6 +23,8 @@ import Image from "next/image";
 import { Button } from "@mui/material";
 import AddingModal from "./AddingModal/AddingModal";
 import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
+import { useRouter } from "next/router";
+import BelgeyeUrunEklemeModal from "../../Belgeler/BelgeyeUrunEklemeModal";
 
 const displayImage = (base64String) => {
   return (
@@ -62,20 +64,21 @@ const columns = [
   // Diğer sütunlar...
 ];
 
+function decryptData(encryptedData) {
+  const decryptedData = atob(encryptedData);
+  return decryptedData;
+}
+
 const Stok = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
+  const [openBelgedenGelenModal, setOpenBelgedenGelenModal] =
+    React.useState(false);
+
   const [openAddingModal, setOpenAddingModal] = useState(false);
 
-  const handleProductDetail = (_id) => {
-    dispatch(getProductDetailProcess({ _id }));
-    setOpen(true); 
-  };
-
-  const { data: ProductDetail } = useSelector(
-    (state) => state.getProductDetail
-  );
+  const { data: ProductDetail } = useSelector((state) => state.productDetail);
 
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
@@ -102,16 +105,30 @@ const Stok = () => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleCloseBelgedenGelenModalOpen = () =>
+    setOpenBelgedenGelenModal(false);
   const handleAddingModalOpen = () => setOpenAddingModal(true);
   const handleAddingModalClose = () => setOpenAddingModal(false);
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const pageStok = router.query.a1;
+  const documentId = router.query.a2;
+  const decryptedPageStok = decryptData(pageStok ? pageStok : null);
+  const decryptedDocumentId = decryptData(documentId ? documentId : null);
+  console.log(decryptedPageStok, "PAGE STOOOOK DECR");
 
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
 
+  const handleProductDetail = (_id) => {
+    dispatch(getProductDetailProcess({ _id }));
+    decryptedPageStok == 1 || 2
+      ? setOpenBelgedenGelenModal(true)
+      : setOpen(true);
+  };
 
-
-  const addNewProduct = () => {
-    dispatch(
+  const addNewProduct = async () => {
+    await dispatch(
       addNewProductProcess({
         productCode: productCode,
         productName: productName,
@@ -124,7 +141,8 @@ const Stok = () => {
         productAddress: productAddress,
       })
     );
-    dispatch(getAllProductsProcess());
+    await dispatch(getAllProductsProcess());
+    handleAddingModalClose();
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -151,7 +169,6 @@ const Stok = () => {
     try {
       await dispatch(productDeleteProcess({ _id }));
       await dispatch(getAllProductsProcess());
-      setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -172,7 +189,6 @@ const Stok = () => {
             src={add}
             alt="Ürün Ekle"
             className="cursor-pointer"
-            
             width={30}
           />
         </Button>
@@ -255,8 +271,10 @@ const Stok = () => {
                               <div className="flex justify-start items-center ">
                                 <Button
                                   variant="outlined"
-                                  onClick={() => deleteProduct(productData._id)}
-                                  
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteProduct(productData._id);
+                                  }}
                                 >
                                   Sil
                                 </Button>
@@ -289,6 +307,13 @@ const Stok = () => {
         open={open}
         handleClose={handleClose}
         ProductDetail={ProductDetail}
+      />
+      <BelgeyeUrunEklemeModal
+        ProductDetail={ProductDetail}
+        openBelgedenGelenModal={openBelgedenGelenModal}
+        handleCloseBelgedenGelenModalOpen={handleCloseBelgedenGelenModalOpen}
+        pageStok={decryptedPageStok}
+        documentId={decryptedDocumentId}
       />
       <AddingModal
         openAddingModal={openAddingModal}

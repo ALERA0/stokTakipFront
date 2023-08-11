@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getAllOrdersProcess, updateOrderProcess } from "@/src/api";
+import { useRouter } from "next/router";
 
 const style = {
   position: "absolute",
@@ -23,6 +24,11 @@ const style = {
   p: 4,
 };
 
+function encryptData(data) {
+  const encryptedData = btoa(data);
+  return encryptedData;
+}
+
 const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
   const [modalTcNumber, setModalTcNumber] = useState("");
   const [modalIsim, setModalIsim] = useState("");
@@ -31,6 +37,8 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
   const [modalAdres, setModalAdres] = useState("");
   const [modalOzellik, setModalOzellik] = useState("");
   const dispatch = useDispatch();
+  const router = useRouter();
+  const { pathname } = router;
 
   useEffect(() => {
     if (open && OrderDetail) {
@@ -40,11 +48,8 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
       setModalTelefon(OrderDetail.telefon);
       setModalAdres(OrderDetail.adres);
       setModalOzellik(OrderDetail.ozellik);
-
     }
   }, [open, OrderDetail]);
-
-  
 
   const handleUpdateOrder = (_id) => {
     dispatch(
@@ -67,10 +72,19 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
       });
   };
 
-
   const updateOrder = () => {
     handleUpdateOrder(OrderDetail?._id);
     handleClose();
+  };
+
+  const handlePastTransactions = () => {
+    const encryptedPageStok = encryptData(3);
+    const encryptedDocumentId = encryptData(OrderDetail?._id);
+
+    router.push({
+      pathname: "/belgeler",
+      query: { a1: encryptedPageStok, a2: encryptedDocumentId },
+    });
   };
 
   return (
@@ -95,7 +109,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Tc No :
@@ -110,7 +124,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Cari İsmi :
@@ -125,7 +139,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Email :
@@ -140,7 +154,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Telefon :
@@ -155,7 +169,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Adres :
@@ -170,7 +184,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               id="transition-modal-title"
               variant="h6"
               component="h2"
-              className="mb-4 gap-2 text-2xl font-bold text-center flex w-full"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Özellik :
@@ -182,7 +196,14 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               />
             </Typography>
 
-            <div className="w-full flex justify-end mt-4">
+            <div className="w-full flex justify-end mt-4 gap-6">
+              <Button
+                // type="primary"
+                className="bg-green-600 text-white hover:bg-green-300 hover:text-white"
+                onClick={handlePastTransactions}
+              >
+                Carinin geçmiş işlemlerini görüntüle
+              </Button>
               <Button
                 type="primary"
                 className="bg-blue-700"
