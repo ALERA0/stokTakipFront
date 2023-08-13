@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { Button, Checkbox, Form, Input } from "antd";
+import { TextareaAutosize } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -59,109 +60,178 @@ const AddingModal = ({
         className="rounded-lg"
       >
         <Fade in={openAddingModal}>
-          <Box sx={style} className="rounded-lg  pt-6 ">
-            <Form
-              name="basic"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              style={{ maxWidth: 600, textDecorationColor: "white  " }}
-              initialValues={{ remember: true }}
-              onFinish={addNewProduct}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-              className="w-full"
+          <Box sx={style} className="rounded-lg  pt-6 text-white ">
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
             >
-              <div className="flex w-full px-5">
-                <label className="text-white flex w-1/3">Ürün Adı</label>
-                <Form.Item
-                  name="productName"
-                  rules={[
-                    { required: true, message: "Lütfen ürün adını girin!" },
-                  ]}
-                  className="text-white w-full"
-                  style={{ color: "white" }}
-                >
-                  <Input
-                    value={productName}
-                    onChange={handleProductNameChange}
-                    className="w-full"
-                  />
-                </Form.Item>
-              </div>
-
-              <Form.Item
-                label="Ürün Kodu"
-                name="productCode"
-                rules={[
-                  { required: true, message: "Lütfen ürün kodunu girin!" },
-                ]}
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Adı :
+              </label>
+              <Input
+                value={productName}
+                onChange={handleProductNameChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Kodu :
+              </label>
+              <Input
+                value={productCode}
+                onChange={handleProductCodeChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Ürün Resmi :
+              </label>
+              <Input
+                value={productImage}
+                onChange={handleProductImageChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Adet :
+              </label>
+              <Input
+                value={productQuantity}
+                onChange={handleProductQuantityChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Fiyat :
+              </label>
+              <Input
+                value={productPrice}
+                onChange={handleProductPriceChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Paket Tipi :
+              </label>
+              <Input
+                value={productPackageType}
+                onChange={handleProductPackageTypeChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Barkod No :
+              </label>
+              <Input
+                value={productBarcode}
+                onChange={handleProductBarcodeChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Adres :
+              </label>
+              <Input
+                value={productAddress}
+                onChange={handleProductAddressChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>{" "}
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              className="pb-3 gap-2 text-2xl font-bold text-center flex w-full"
+            >
+              <label className="text-lg font-bold text-center w-2/5 flex justify-end">
+                Açıklama :
+              </label>
+              <TextareaAutosize
+                minRows={3}
+                maxRows={6}
+                value={productDescription}
+                onChange={handleProductDescriptionChange}
+                className="w-3/5"
+                maxLength={11}
+                // minLength={11}
+              />
+            </Typography>
+            <div className="w-full flex justify-end mt-3  gap-4 ">
+              <Button
+                type="primary"
+                className="bg-red-700"
+                onClick={handleCloseAddingModal}
               >
-                <Input value={productCode} onChange={handleProductCodeChange} />
-              </Form.Item>
-
-              <Form.Item label="Ürün Resmi" name="productImage">
-                <Input
-                  value={productImage}
-                  onChange={handleProductImageChange}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Adet"
-                name="productQuantity"
-                rules={[{ required: true, message: "Lütfen adeti girin!" }]}
+                Kapat
+              </Button>
+              <Button
+                type="primary"
+                className="bg-blue-700"
+                onClick={addNewProduct}
               >
-                <Input
-                  value={productQuantity}
-                  onChange={handleProductQuantityChange}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Fiyat"
-                name="productPrice"
-                rules={[{ required: true, message: "Lütfen fiyatı girin!" }]}
-              >
-                <Input
-                  value={productPrice}
-                  onChange={handleProductPriceChange}
-                />
-              </Form.Item>
-
-              <Form.Item label="Ambalaj Tipi" name="productPackageType">
-                <Input
-                  value={productPackageType}
-                  onChange={handleProductPackageTypeChange}
-                />
-              </Form.Item>
-
-              <Form.Item label="Barkod" name="productBarcode">
-                <Input
-                  value={productBarcode}
-                  onChange={handleProductBarcodeChange}
-                />
-              </Form.Item>
-
-              <Form.Item label="Adres" name="productAddress">
-                <Input
-                  value={productAddress}
-                  onChange={handleProductAddressChange}
-                />
-              </Form.Item>
-
-              <Form.Item label="Açıklama" name="productDescription">
-                <Input
-                  value={productDescription}
-                  onChange={handleProductDescriptionChange}
-                />
-              </Form.Item>
-
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                  Ekle
-                </Button>
-              </Form.Item>
-            </Form>
+                Kaydet
+              </Button>
+            </div>
           </Box>
         </Fade>
       </Modal>

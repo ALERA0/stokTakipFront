@@ -9,8 +9,8 @@ import { TextareaAutosize } from "@mui/material";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getAllProductsProcess, updateProductProcess } from "../api";
-import { resetAllProducts } from "../redux/slice/get-all-products-slice";
+import { getAllProductsProcess, updateProductProcess } from "../../../api";
+import { resetAllProducts } from "../../../redux/slice/get-all-products-slice";
 
 const style = {
   position: "absolute",
@@ -24,13 +24,7 @@ const style = {
   p: 4,
 };
 
-const ModalComponent = ({
-  open,
-  handleClose,
-  ProductDetail,
-}) => {
-  
-
+const ModalComponent = ({ open, handleClose, ProductDetail }) => {
   const [urunAdi, setUrunAdi] = useState("");
   const [sk, setSK] = useState("");
   const [fiyat, setFiyat] = useState("");
@@ -139,7 +133,11 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Kodu :
               </label>
-              <Input value={sk} className="w-3/5" onChange={(e) => setSK(e.target.value)} />
+              <Input
+                value={sk}
+                className="w-3/5"
+                onChange={(e) => setSK(e.target.value)}
+              />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -161,7 +159,11 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Fiyatı :
               </label>
-              <Input value={fiyat} className="w-3/5" onChange={(e) => setFiyat(e.target.value)} />
+              <Input
+                value={fiyat}
+                className="w-3/5"
+                onChange={(e) => setFiyat(e.target.value)}
+              />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -172,7 +174,11 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Paket Türü :
               </label>
-              <Input value={paket} className="w-3/5" onChange={(e) => setPaket(e.target.value)} />
+              <Input
+                value={paket}
+                className="w-3/5"
+                onChange={(e) => setPaket(e.target.value)}
+              />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -183,7 +189,11 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Barkod No :
               </label>
-              <Input value={barkod} className="w-3/5" onChange={(e) => setBarkod(e.target.value)}/>
+              <Input
+                value={barkod}
+                className="w-3/5"
+                onChange={(e) => setBarkod(e.target.value)}
+              />
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -194,7 +204,11 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Raf Adresi :
               </label>
-              <Input value={adres} className="w-3/5" onChange={(e) => setAdres(e.target.value)} />
+              <Input
+                value={adres}
+                className="w-3/5"
+                onChange={(e) => setAdres(e.target.value)}
+              />
             </Typography>
             <Typography
               id="transition-modal-description"
@@ -204,7 +218,13 @@ const ModalComponent = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Açıklama :
               </label>
-              <TextareaAutosize value={aciklama} className="w-3/5" onChange={(e) => setAciklama(e.target.value)} />
+              <TextareaAutosize
+                value={aciklama}
+                minRows={3}
+                maxRows={6}
+                className="w-3/5"
+                onChange={(e) => setAciklama(e.target.value)}
+              />
             </Typography>
             <div className="w-full flex justify-end mt-4">
               <Button

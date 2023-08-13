@@ -54,7 +54,6 @@ const BelgeOluşturma = () => {
           description: description,
         })
       );
-      console.log(addIncomingProduct);
 
       await dispatch(
         getIncomingProductDetailProcess({
@@ -70,7 +69,6 @@ const BelgeOluşturma = () => {
           description: description,
         })
       );
-      console.log(addIncomingProduct);
 
       await dispatch(
         getOutgoingProductDetailProcess({
@@ -79,7 +77,7 @@ const BelgeOluşturma = () => {
       );
     }
 
-    router.push("/belgeDetay");
+   await router.push("/belgeDetay");
   };
   useEffect(() => {
     dispatch(getOrderDetailProcess({ _id: order }));
@@ -96,6 +94,11 @@ const BelgeOluşturma = () => {
   }, [OrderDetail]);
 
   const options = pathname === "/urunGiris" ? tedarikciOrders : musteriOrders;
+
+  console.log(addIncomingProduct);
+  console.log(addOutgoingProduct._id,"IDDDDDDDDDDDDDDDDDDDDDDDDD");
+
+
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col ">
@@ -124,9 +127,9 @@ const BelgeOluşturma = () => {
       <div className="flex w-full justify-around  ">
         <div className="flex gap-2">
           <p className="text-xl font-bold my-auto">Satıcı : </p>
-          <div className="relative z-10 w-44">
+          <div className="relative z-10 w-44 my-auto ">
             <Listbox value={order} onChange={setOrder}>
-              <div className="relative mt-1">
+              <div className="relative mt-1 ">
                 <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                   <span className="block truncate">
                     {orderName ? orderName : "Satıcı Seç"}
@@ -187,8 +190,10 @@ const BelgeOluşturma = () => {
         <div className="flex gap-2">
           <p className="text-xl font-bold my-auto">Belge Açıklaması : </p>
           <TextareaAutosize
+            minRows={3}
+            maxRows={6}
             value={description}
-            className="w-auto h-8 text-center  my-auto"
+            className="w-auto h-8  px-1  my-auto"
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>

@@ -328,8 +328,10 @@ const belgeDetay = () => {
               <div className="flex gap-2">
                 <p className="text-xl font-bold my-auto">Belge Açıklaması : </p>
                 <TextareaAutosize
+                  minRows={2}
+                  maxRows={4}
                   value={description}
-                  className="w-auto h-8 text-center  my-auto"
+                  className="w-52 h-8 text-center  my-auto"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>

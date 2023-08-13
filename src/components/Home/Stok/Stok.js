@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import ModalComponent from "../../ModalComponent";
+import ModalComponent from "./ModalComponent";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addNewProductProcess,
@@ -25,6 +25,7 @@ import AddingModal from "./AddingModal/AddingModal";
 import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
 import { useRouter } from "next/router";
 import BelgeyeUrunEklemeModal from "../../Belgeler/BelgeyeUrunEklemeModal";
+import ProductDetailModal from "./ProductDetailModal";
 
 const displayImage = (base64String) => {
   return (
@@ -77,6 +78,7 @@ const Stok = () => {
     React.useState(false);
 
   const [openAddingModal, setOpenAddingModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
 
   const { data: ProductDetail } = useSelector((state) => state.productDetail);
 
@@ -107,8 +109,10 @@ const Stok = () => {
   const handleClose = () => setOpen(false);
   const handleCloseBelgedenGelenModalOpen = () =>
     setOpenBelgedenGelenModal(false);
+
   const handleAddingModalOpen = () => setOpenAddingModal(true);
   const handleAddingModalClose = () => setOpenAddingModal(false);
+  const handleCloseUpdateModal = () => setOpenUpdateModal(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -121,10 +125,19 @@ const Stok = () => {
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
 
   const handleProductDetail = (_id) => {
+    console.log(decryptedPageStok, "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     dispatch(getProductDetailProcess({ _id }));
-    decryptedPageStok == 1 || 2
-      ? setOpenBelgedenGelenModal(true)
-      : setOpen(true);
+    if (decryptedPageStok == 1 || decryptedPageStok == 2) {
+      setOpenBelgedenGelenModal(true);
+    } else {
+      setOpen(true);
+    }
+  };
+
+  const handleProductDetailForUpdateModal = (_id) => {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    dispatch(getProductDetailProcess({ _id }));
+    setOpenUpdateModal(true);
   };
 
   const addNewProduct = async () => {
@@ -268,7 +281,18 @@ const Stok = () => {
                                 </span>
                               </div>
                             ) : column.id === "actions" ? (
-                              <div className="flex justify-start items-center ">
+                              <div className="flex justify-start items-center gap-2 ">
+                                <Button
+                                  variant="text"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleProductDetailForUpdateModal(
+                                      productData._id
+                                    );
+                                  }}
+                                >
+                                  Düzenle
+                                </Button>
                                 <Button
                                   variant="outlined"
                                   onClick={(e) => {
@@ -304,8 +328,8 @@ const Stok = () => {
         />
       </Paper>
       <ModalComponent
-        open={open}
-        handleClose={handleClose}
+        open={openUpdateModal}
+        handleClose={handleCloseUpdateModal}
         ProductDetail={ProductDetail}
       />
       <BelgeyeUrunEklemeModal
@@ -314,6 +338,11 @@ const Stok = () => {
         handleCloseBelgedenGelenModalOpen={handleCloseBelgedenGelenModalOpen}
         pageStok={decryptedPageStok}
         documentId={decryptedDocumentId}
+      />
+      <ProductDetailModal
+        open={open}
+        handleClose={handleClose}
+        ProductDetail={ProductDetail}
       />
       <AddingModal
         openAddingModal={openAddingModal}
