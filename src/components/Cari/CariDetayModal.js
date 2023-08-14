@@ -119,6 +119,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail, detailOrUpdate }) => {
                   value={modalTcNumber}
                   onChange={(e) => setModalTcNumber(e.target.value)}
                   className="w-3/5"
+                  maxLength={11}
                 />
               ) : (
                 <Input value={modalTcNumber} className="w-3/5" />

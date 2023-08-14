@@ -37,6 +37,8 @@ import {
   showToastSuccesMessage,
 } from "../../ToastComponent";
 import { resetUpdateProduct } from "@/src/redux/slice/update-product-slice";
+import { resetAddIncomingProductToIncomingProduct } from "@/src/redux/slice/add-incoming-product-to-incoming-product-slice";
+import { resetAddIncomingProductToOutgoingProduct } from "@/src/redux/slice/add-incoming-product-to-outgoing-product-slice";
 
 const displayImage = (base64String) => {
   return (
@@ -142,6 +144,14 @@ const Stok = () => {
     (state) => state.updateProduct
   );
 
+  const { status: addProductToIncomingProductStatus } = useSelector(
+    (state) => state.addProductToIncomingProduct
+  );
+
+  const { status: addProductToOutgoingProductStatus } = useSelector(
+    (state) => state.addProductToOutgoingProduct
+  );
+
   const handleProductDetail = (_id) => {
     console.log(decryptedPageStok, "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     dispatch(getProductDetailProcess({ _id }));
@@ -192,7 +202,27 @@ const Stok = () => {
       showToastErrorMessage("Ürün Güncellenemedi");
       dispatch(resetUpdateProduct());
     }
-  }, [status, DeleteProductStatus.productDeleteProcess, updateProductStatus]);
+    if (addProductToIncomingProductStatus === "success") {
+      showToastSuccesMessage("Ürün Belgeye Eklendi");
+      dispatch(resetAddIncomingProductToIncomingProduct());
+    } else if (addProductToIncomingProductStatus === "error") {
+      showToastErrorMessage("Ürün Belgeye Eklenemedi");
+      dispatch(resetAddIncomingProductToIncomingProduct());
+    }
+    if (addProductToOutgoingProductStatus === "success") {
+      showToastSuccesMessage("Ürün Belgeye Eklendi");
+      dispatch(resetAddIncomingProductToOutgoingProduct());
+    } else if (addProductToOutgoingProductStatus === "error") {
+      showToastErrorMessage("Ürün Belgeye Eklenemedi");
+      dispatch(resetAddIncomingProductToOutgoingProduct());
+    }
+  }, [
+    status,
+    DeleteProductStatus.productDeleteProcess,
+    updateProductStatus,
+    addProductToIncomingProductStatus,
+    addProductToOutgoingProductStatus,
+  ]);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);

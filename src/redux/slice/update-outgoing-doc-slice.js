@@ -8,6 +8,13 @@ export const updateOutgoingDocSlice = createSlice({
         status: undefined,
         isLoading: false,
     },
+    reducers: {
+        resetUpdateOutgoingDoc: (state) => {
+          state.data = undefined;
+          state.isLoading = {};
+          state.status = {};
+        },
+      },
     extraReducers: {
         [updateOutgoingDocProcess.pending]: (state) => {
             state.isLoading = true;
@@ -22,8 +29,11 @@ export const updateOutgoingDocSlice = createSlice({
         },
         [updateOutgoingDocProcess.rejected]: (state) => {
             state.isLoading = false;
+      state.status = "error";
+
         }
     },
 });
 
+export const { resetUpdateOutgoingDoc } = updateOutgoingDocSlice.actions;
 export default updateOutgoingDocSlice.reducer;

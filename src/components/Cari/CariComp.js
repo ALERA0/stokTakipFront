@@ -23,6 +23,13 @@ import CariAddingModal from "./CariAddingModal";
 import CariDetayModal from "./CariDetayModal";
 import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
 import { useEffect } from "react";
+import { resetAddOrder } from "@/src/redux/slice/add-new-order-slice";
+import {
+  showToastErrorMessage,
+  showToastSuccesMessage,
+} from "../ToastComponent";
+import { resetUpdateOrder } from "@/src/redux/slice/update-order-slice";
+import { resetDeleteOrder } from "@/src/redux/slice/delete-order-slice";
 
 const columns = [
   {
@@ -178,7 +185,14 @@ const CariComp = () => {
   const allOrders = useSelector((state) => state.getAllOrders.data);
   const musteriOrders = useSelector((state) => state.getMusteriOrders.data);
   const tedarikciOrders = useSelector((state) => state.getTedarikciOrders.data);
-
+  const { status: newOrderStatus } = useSelector((state) => state.newOrder);
+  const { status: updateOrderStatus } = useSelector(
+    (state) => state.updateOrder
+  );
+  deleteOrder;
+  const { status: deleteOrderStatus } = useSelector(
+    (state) => state.deleteOrder
+  );
   // Hangi tab seçiliyse, ona göre verileri filtrele:
   let filteredData = [];
   if (selectedTab === "Musteri") {
@@ -188,6 +202,30 @@ const CariComp = () => {
   } else {
     filteredData = allOrders;
   }
+
+  useEffect(() => {
+    if (newOrderStatus === "succes") {
+      showToastSuccesMessage("Cari Eklendi");
+      dispatch(resetAddOrder());
+    } else if (newOrderStatus === "error") {
+      showToastErrorMessage("Cari Eklenemedi");
+      dispatch(resetAddOrder());
+    }
+    if (updateOrderStatus === "success") {
+      showToastSuccesMessage("Cari Güncellendi");
+      dispatch(resetUpdateOrder());
+    } else if (updateOrderStatus === "error") {
+      showToastErrorMessage("Cari Güncellenemedi");
+      dispatch(resetUpdateOrder());
+    }
+    if (deleteOrderStatus.deleteOrderProcess === "success") {
+      showToastSuccesMessage("Cari Silindi");
+      dispatch(resetDeleteOrder());
+    } else if (deleteOrderStatus.deleteOrderProcess === "error") {
+      showToastErrorMessage("Cari Silinemedi");
+      dispatch(resetDeleteOrder());
+    }
+  }, [newOrderStatus, updateOrderStatus, deleteOrderStatus.deleteOrderProcess]);
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col">

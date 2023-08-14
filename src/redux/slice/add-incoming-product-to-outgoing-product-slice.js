@@ -30,6 +30,8 @@ export const addIncomingProductToOutgoingProductSlice = createSlice({
         },
         [addIncomingProductToOutgoingProductProcess.rejected]: state => {
             state.isLoading = false;
+            state.status = 'error';
+
         },
     },
 });

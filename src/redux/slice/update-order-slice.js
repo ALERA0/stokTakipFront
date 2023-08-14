@@ -8,6 +8,13 @@ export const updateOrderSlice = createSlice({
         status: undefined,
         isLoading: false,
     },
+    reducers: {
+        resetUpdateOrder: (state) => {
+          state.data = undefined;
+          state.isLoading = {};
+          state.status = {};
+        },
+      },
     extraReducers: {
         [updateOrderProcess.pending]: (state) => {
             state.isLoading = true;
@@ -22,8 +29,10 @@ export const updateOrderSlice = createSlice({
         },
         [updateOrderProcess.rejected]: (state) => {
             state.isLoading = false;
+            state.status = "error";
         }
     },
 });
 
+export const { resetUpdateOrder } = updateOrderSlice.actions;
 export default updateOrderSlice.reducer;

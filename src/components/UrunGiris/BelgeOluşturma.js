@@ -95,7 +95,7 @@ const BelgeOluşturma = () => {
   const options = pathname === "/urunGiris" ? tedarikciOrders : musteriOrders;
 
   console.log(addIncomingProduct);
-  console.log(addOutgoingProduct._id,"IDDDDDDDDDDDDDDDDDDDDDDDDD");
+  console.log(addOutgoingProduct?._id,"IDDDDDDDDDDDDDDDDDDDDDDDDD");
 
 
 

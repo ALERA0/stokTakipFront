@@ -218,7 +218,7 @@ const addNewOrderProcess = createAsyncThunk(
       const res = await axios.post("newOrder", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -239,7 +239,7 @@ const addIncomingProductProcess = createAsyncThunk(
       const res = await axios.post("addIncomingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -259,7 +259,7 @@ const addOutgoingProductProcess = createAsyncThunk(
       const res = await axios.post("addOutgoingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -270,8 +270,12 @@ const deleteOrderProcess = createAsyncThunk(
     const { _id } = data;
     const params = new FormData();
     params.append("_id", _id);
-    const res = await axios.post("deleteOrder", params);
-    return res.data;
+    try {
+      const res = await axios.post("deleteOrder", params);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
@@ -302,7 +306,7 @@ const updateOrderProcess = createAsyncThunk(
       const res = await axios.post("updateOrder", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -401,7 +405,7 @@ const addIncomingProductToIncomingProductProcess = createAsyncThunk(
       const res = await axios.post("addProductToIncomingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -418,7 +422,7 @@ const addIncomingProductToOutgoingProductProcess = createAsyncThunk(
       const res = await axios.post("addProductToOutgoingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -430,7 +434,9 @@ const updateOutgoingDocProcess = createAsyncThunk(
     const params = new FormData();
     params.append("documentDate", documentDate);
     params.append("documentNumber", documentNumber);
-    params.append("order", order);
+    if (order) {
+      params.append("order", order);
+    }
     params.append("description", description);
     params.append("_id", _id);
 
@@ -438,7 +444,7 @@ const updateOutgoingDocProcess = createAsyncThunk(
       const res = await axios.post("updateOutgoingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -450,7 +456,9 @@ const updateIncomingDocProcess = createAsyncThunk(
     const params = new FormData();
     params.append("documentDate", documentDate);
     params.append("documentNumber", documentNumber);
-    params.append("order", order);
+    if (order) {
+      params.append("order", order);
+    }
     params.append("description", description);
     params.append("_id", _id);
 
@@ -458,7 +466,7 @@ const updateIncomingDocProcess = createAsyncThunk(
       const res = await axios.post("updateIncomingProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );

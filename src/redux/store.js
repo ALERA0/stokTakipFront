@@ -2,9 +2,9 @@ import {
   combineReducers,
   configureStore,
   getDefaultMiddleware,
-} from '@reduxjs/toolkit';
+} from "@reduxjs/toolkit";
 
-import logger from 'redux-logger';
+import logger from "redux-logger";
 
 import {
   authSlice,
@@ -35,8 +35,8 @@ import {
   addIncomingProductToOutgoingProductSlice,
   updateOutgoingDocSlice,
   updateIncomingDocSlice,
-} from './slice';
-
+  addNewOrderSlice,
+} from "./slice";
 
 const reducer = combineReducers({
   auth: authSlice,
@@ -67,11 +67,10 @@ const reducer = combineReducers({
   addProductToOutgoingProduct: addIncomingProductToOutgoingProductSlice,
   updateOutgoingProduct: updateOutgoingDocSlice,
   updateIncomingProduct: updateIncomingDocSlice,
-
-
+  newOrder: addNewOrderSlice,
 });
 
 export const store = configureStore({
   reducer,
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

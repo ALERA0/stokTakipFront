@@ -30,6 +30,15 @@ import {
 import { TextareaAutosize } from "@mui/material";
 import add from "../../public/images/add.png";
 import BelgeyeUrunEklemeModal from "../components/Belgeler/BelgeyeUrunEklemeModal";
+import { resetAddIncomingProductToIncomingProduct } from "../redux/slice/add-incoming-product-to-incoming-product-slice";
+import { resetAddIncomingProduct } from "../redux/slice/add-incoming-product-slice";
+import {
+  showToastErrorMessage,
+  showToastSuccesMessage,
+} from "../components/ToastComponent";
+import { resetAddOutgoingProduct } from "../redux/slice/add-outgoing-product-slice";
+import { resetUpdateIncomingDoc } from "../redux/slice/update-incoming-doc-slice";
+import { resetUpdateOutgoingDoc } from "../redux/slice/update-outgoing-doc-slice";
 
 const columns = [
   {
@@ -88,6 +97,13 @@ const belgeDetay = () => {
   const { data: OutgoingProductsDetailData } = useSelector(
     (state) => state?.outgoingProductdetail
   );
+  const { status: addIncomingProductStatus } = useSelector(
+    (state) => state.addIncomingProduct
+  );
+
+  const { status: addOutgoingProductStatus } = useSelector(
+    (state) => state.addOutgoingProduct
+  );
 
   const [isGelen, setIsGelen] = useState(null);
   useEffect(() => {
@@ -125,6 +141,8 @@ const belgeDetay = () => {
       }
     }
   }, [data]);
+
+  console.log(addIncomingProductStatus, "STATUSSSSSSSSSSSSSSSSSSSS");
 
   const handleDeleteProductFromDocument = async (productRowId) => {
     console.log(productRowId, "PRODUCT ROW ID: ");
@@ -223,8 +241,60 @@ const belgeDetay = () => {
             order: selectedOrder,
           })
         );
+
     console.log(selectedOrder, "DOĞRU YAZIYOR MU BU LİSTBOX");
   };
+  const { status: updateIncomingProductDocStatus } = useSelector(
+    (state) => state.updateIncomingProduct
+  );
+
+  const { status: updateOutgoingProductDocStatus } = useSelector(
+    (state) => state.updateOutgoingProduct
+  );
+
+  useEffect(() => {
+    if (addIncomingProductStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Belge Eklendi");
+      dispatch(resetAddIncomingProduct());
+    } else if (addIncomingProductStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Belge Eklenemedi");
+      dispatch(resetAddIncomingProduct());
+    }
+    if (addOutgoingProductStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Belge Eklendi");
+      dispatch(resetAddOutgoingProduct());
+    } else if (addOutgoingProductStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Belge Eklenemedi");
+      dispatch(resetAddOutgoingProduct());
+    }
+    if (updateIncomingProductDocStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Belge Güncellendi");
+      dispatch(resetUpdateIncomingDoc());
+    } else if (updateIncomingProductDocStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Belge Güncellenemedi");
+      dispatch(resetUpdateIncomingDoc());
+    }
+    if (updateOutgoingProductDocStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Belge Güncellendi");
+      dispatch(resetUpdateOutgoingDoc());
+    } else if (updateOutgoingProductDocStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Belge Güncellenemedi");
+      dispatch(resetUpdateOutgoingDoc());
+    }
+  }, [
+    addIncomingProductStatus,
+    addOutgoingProductStatus,
+    updateIncomingProductDocStatus,
+    updateOutgoingProductDocStatus
+  ]);
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col ">
