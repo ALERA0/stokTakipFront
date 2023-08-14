@@ -46,11 +46,7 @@ const columns = [
     label: "Açıklama",
     minWidth: 100,
   },
-  {
-    id: "actions",
-    label: "İşlemler",
-    minWidth: 100,
-  },
+
 ];
 
 const tabOptions = [
@@ -273,17 +269,7 @@ const Belgeler = () => {
                                     </div>
                                   )}
                                 </div>
-                              ) : column.id === "actions" ? (
-                                <div className="flex justify-start items-center ">
-                                  <Button
-                                    variant="outlined"
-                                    // onClick={() =>
-                                    //   deleteOrder(documentData._id)
-                                    // }
-                                  >
-                                    Sil
-                                  </Button>
-                                </div>
+                              
                               ) : column.format && typeof value === "number" ? (
                                 <span
                                   style={{

@@ -26,7 +26,6 @@ const BelgeOluşturma = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { pathname } = router;
-console.log("a")
   useEffect(() => {
     dispatch(getTedarikciOrdersProcess());
     dispatch(getMusteriOrdersProcess());

@@ -7,6 +7,8 @@ import Navbar from "../components/Navbar/Navbar";
 import Menu from "../components/Home/SideBar/Menu";
 import { useRouter } from "next/router";
 import { store } from "../redux/store";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -31,6 +33,7 @@ export default function App({ Component, pageProps }) {
           <div className="flex flex-col w-full ">
             <Navbar />
             <Component {...pageProps} />
+            <ToastContainer  position="top-right" />
           </div>
         )}
         {isLoginPage && <Component {...pageProps} />}

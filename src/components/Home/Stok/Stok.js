@@ -24,8 +24,19 @@ import { Button } from "@mui/material";
 import AddingModal from "./AddingModal/AddingModal";
 import { resetAllProducts } from "@/src/redux/slice/get-all-products-slice";
 import { useRouter } from "next/router";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 import BelgeyeUrunEklemeModal from "../../Belgeler/BelgeyeUrunEklemeModal";
-import ProductDetailModal from "./ProductDetailModal";
+import { resetAddProduct } from "@/src/redux/slice/add-new-product-slice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { resetProductDelete } from "@/src/redux/slice/delete-product-from-incoming-product-slice";
+import { resetDeleteProduct } from "@/src/redux/slice/delete-product-slice";
+import {
+  showToastErrorMessage,
+  showToastSuccesMessage,
+} from "../../ToastComponent";
+import { resetUpdateProduct } from "@/src/redux/slice/update-product-slice";
 
 const displayImage = (base64String) => {
   return (
@@ -81,6 +92,7 @@ const Stok = () => {
   const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
 
   const { data: ProductDetail } = useSelector((state) => state.productDetail);
+  const { status } = useSelector((state) => state.addNewProduct);
 
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
@@ -91,7 +103,8 @@ const Stok = () => {
   const [productBarcode, setProductBarcode] = useState("");
   const [productAddress, setProductAddress] = useState("");
   const [productDescription, setProductDescription] = useState("");
-
+  const [detailOrUpdate, setDetailOrUpdate] = useState(false);
+  const [alertState, setAlertState] = useState(false);
   // Yeni ürün bilgilerini state'lerle güncellemek için handleChange fonksiyonları
   const handleProductNameChange = (e) => setProductName(e.target.value);
   const handleProductCodeChange = (e) => setProductCode(e.target.value);
@@ -120,9 +133,14 @@ const Stok = () => {
   const documentId = router.query.a2;
   const decryptedPageStok = decryptData(pageStok ? pageStok : null);
   const decryptedDocumentId = decryptData(documentId ? documentId : null);
-  console.log(decryptedPageStok, "PAGE STOOOOK DECR");
 
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
+  const { status: DeleteProductStatus } = useSelector(
+    (state) => state.productDelete
+  );
+  const { status: updateProductStatus } = useSelector(
+    (state) => state.updateProduct
+  );
 
   const handleProductDetail = (_id) => {
     console.log(decryptedPageStok, "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
@@ -132,12 +150,6 @@ const Stok = () => {
     } else {
       setOpen(true);
     }
-  };
-
-  const handleProductDetailForUpdateModal = (_id) => {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    dispatch(getProductDetailProcess({ _id }));
-    setOpenUpdateModal(true);
   };
 
   const addNewProduct = async () => {
@@ -157,6 +169,30 @@ const Stok = () => {
     await dispatch(getAllProductsProcess());
     handleAddingModalClose();
   };
+
+  useEffect(() => {
+    if (status === "succes") {
+      showToastSuccesMessage("Ürün Eklendi");
+      dispatch(resetAddProduct());
+    } else if (status === "error") {
+      showToastErrorMessage("Ürün Eklenemedi");
+      dispatch(resetAddProduct());
+    }
+    if (DeleteProductStatus.productDeleteProcess === "success") {
+      showToastSuccesMessage("Ürün Silindi");
+      dispatch(resetDeleteProduct());
+    } else if (DeleteProductStatus.productDeleteProcess === "error") {
+      showToastErrorMessage("Ürün Silinemedi");
+      dispatch(resetDeleteProduct());
+    }
+    if (updateProductStatus === "success") {
+      showToastSuccesMessage("Ürün Güncellendi");
+      dispatch(resetUpdateProduct());
+    } else if (updateProductStatus === "error") {
+      showToastErrorMessage("Ürün Güncellenemedi");
+      dispatch(resetUpdateProduct());
+    }
+  }, [status, DeleteProductStatus.productDeleteProcess, updateProductStatus]);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -235,7 +271,10 @@ const Stok = () => {
                       role="checkbox"
                       tabIndex={-1}
                       key={productData._id}
-                      onClick={() => handleProductDetail(productData._id)}
+                      onClick={() => {
+                        handleProductDetail(productData._id);
+                        setDetailOrUpdate(false);
+                      }}
                       className="cursor-pointer"
                     >
                       {columns.map((column) => {
@@ -286,9 +325,9 @@ const Stok = () => {
                                   variant="text"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleProductDetailForUpdateModal(
-                                      productData._id
-                                    );
+                                    handleProductDetail(productData._id);
+                                    setDetailOrUpdate(true);
+                                    setOpen(true);
                                   }}
                                 >
                                   Düzenle
@@ -328,9 +367,10 @@ const Stok = () => {
         />
       </Paper>
       <ModalComponent
-        open={openUpdateModal}
-        handleClose={handleCloseUpdateModal}
+        open={open}
+        handleClose={handleClose}
         ProductDetail={ProductDetail}
+        detailOrUpdate={detailOrUpdate}
       />
       <BelgeyeUrunEklemeModal
         ProductDetail={ProductDetail}
@@ -339,11 +379,7 @@ const Stok = () => {
         pageStok={decryptedPageStok}
         documentId={decryptedDocumentId}
       />
-      <ProductDetailModal
-        open={open}
-        handleClose={handleClose}
-        ProductDetail={ProductDetail}
-      />
+
       <AddingModal
         openAddingModal={openAddingModal}
         handleCloseAddingModal={handleAddingModalClose}

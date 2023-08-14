@@ -24,7 +24,12 @@ const style = {
   p: 4,
 };
 
-const ModalComponent = ({ open, handleClose, ProductDetail }) => {
+const ModalComponent = ({
+  open,
+  handleClose,
+  ProductDetail,
+  detailOrUpdate,
+}) => {
   const [urunAdi, setUrunAdi] = useState("");
   const [sk, setSK] = useState("");
   const [fiyat, setFiyat] = useState("");
@@ -103,11 +108,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün İsmi :
               </label>
-              <Input
-                value={urunAdi}
-                onChange={(e) => setUrunAdi(e.target.value)}
-                className="w-3/5"
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={urunAdi}
+                  onChange={(e) => setUrunAdi(e.target.value)}
+                  className="w-3/5"
+                />
+              ) : (
+                <Input value={urunAdi} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -133,11 +142,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Kodu :
               </label>
-              <Input
-                value={sk}
-                className="w-3/5"
-                onChange={(e) => setSK(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={sk}
+                  className="w-3/5"
+                  onChange={(e) => setSK(e.target.value)}
+                />
+              ) : (
+                <Input value={sk} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -159,11 +172,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Ürün Fiyatı :
               </label>
-              <Input
-                value={fiyat}
-                className="w-3/5"
-                onChange={(e) => setFiyat(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={fiyat}
+                  className="w-3/5"
+                  onChange={(e) => setFiyat(e.target.value)}
+                />
+              ) : (
+                <Input value={fiyat} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -174,11 +191,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Paket Türü :
               </label>
-              <Input
-                value={paket}
-                className="w-3/5"
-                onChange={(e) => setPaket(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={paket}
+                  className="w-3/5"
+                  onChange={(e) => setPaket(e.target.value)}
+                />
+              ) : (
+                <Input value={paket} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -189,11 +210,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Barkod No :
               </label>
-              <Input
-                value={barkod}
-                className="w-3/5"
-                onChange={(e) => setBarkod(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={barkod}
+                  className="w-3/5"
+                  onChange={(e) => setBarkod(e.target.value)}
+                />
+              ) : (
+                <Input value={barkod} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -204,11 +229,15 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Raf Adresi :
               </label>
-              <Input
-                value={adres}
-                className="w-3/5"
-                onChange={(e) => setAdres(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={adres}
+                  className="w-3/5"
+                  onChange={(e) => setAdres(e.target.value)}
+                />
+              ) : (
+                <Input value={adres} className="w-3/5" readOnly />
+              )}
             </Typography>
             <Typography
               id="transition-modal-description"
@@ -218,22 +247,34 @@ const ModalComponent = ({ open, handleClose, ProductDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Açıklama :
               </label>
-              <TextareaAutosize
-                value={aciklama}
-                minRows={3}
-                maxRows={6}
-                className="w-3/5"
-                onChange={(e) => setAciklama(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <TextareaAutosize
+                  value={aciklama}
+                  minRows={3}
+                  maxRows={6}
+                  className="w-3/5"
+                  onChange={(e) => setAciklama(e.target.value)}
+                />
+              ) : (
+                <TextareaAutosize
+                  value={aciklama}
+                  minRows={3}
+                  maxRows={6}
+                  className="w-3/5"
+                  readOnly
+                />
+              )}
             </Typography>
             <div className="w-full flex justify-end mt-4">
-              <Button
-                type="primary"
-                className="bg-blue-700"
-                onClick={updateProduct}
-              >
-                Kaydet
-              </Button>
+              {detailOrUpdate ? (
+                <Button
+                  type="primary"
+                  className="bg-blue-700"
+                  onClick={updateProduct}
+                >
+                  Kaydet
+                </Button>
+              ) : null}
             </div>
           </Box>
         </Fade>

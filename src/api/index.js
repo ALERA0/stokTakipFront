@@ -61,8 +61,12 @@ const productDeleteProcess = createAsyncThunk(
     const { _id } = data;
     const params = new FormData();
     params.append("_id", _id);
-    const res = await axios.post("productDelete", params);
-    return res.data;
+    try {
+      const res = await axios.post("productDelete", params);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
@@ -162,7 +166,7 @@ const addNewProductProcess = createAsyncThunk(
       const res = await axios.post("addProduct", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -193,7 +197,7 @@ const updateProductProcess = createAsyncThunk(
       const res = await axios.post("productUpdate", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -243,7 +247,7 @@ const addIncomingProductProcess = createAsyncThunk(
 const addOutgoingProductProcess = createAsyncThunk(
   "addOutgoingProduct/addOutgoingProductProcess",
   async (data) => {
-    const { documentNumber, order, description,documentDate } = data;
+    const { documentNumber, order, description, documentDate } = data;
     const params = new FormData();
     params.append("documentNumber", documentNumber);
     if (order) {

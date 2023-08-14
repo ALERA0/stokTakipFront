@@ -44,7 +44,7 @@ const columns = [
   {
     id: "actions",
     label: "İşlemler",
-    minWidth: 100,
+    minWidth: 50,
   },
 ];
 
@@ -61,7 +61,7 @@ const CariComp = () => {
   const [open, setOpen] = React.useState(false);
   const [openAddingModal, setOpenAddingModal] = useState(false);
   const dispatch = useDispatch();
-  const [isDeleteAction, setIsDeleteAction] = useState(false);
+  const [detailOrUpdate, setDetailOrUpdate] = useState(false);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -80,7 +80,6 @@ const CariComp = () => {
 
   const handleOrderDetail = (_id) => {
     dispatch(getOrderDetailProcess({ _id }));
-    setOpen(true); // Detayları görmek için modalı aç
   };
 
   const { data: OrderDetail } = useSelector((state) => state.orderDetail);
@@ -252,7 +251,11 @@ const CariComp = () => {
                         role="checkbox"
                         tabIndex={-1}
                         key={orderData._id}
-                        onClick={() => handleOrderDetail(orderData._id)}
+                        onClick={() => {
+                          handleOrderDetail(orderData._id);
+                          setOpen(true);
+                          setDetailOrUpdate(false);
+                        }}
                         className="cursor-pointer"
                       >
                         {columns.map((column) => {
@@ -298,11 +301,22 @@ const CariComp = () => {
                                   </span>
                                 </div>
                               ) : column.id === "actions" ? (
-                                <div className="flex relative z-20 justify-start items-center ">
+                                <div className="flex relative  justify-start items-center gap-2 ">
+                                  <Button
+                                    variant="text"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOrderDetail(orderData._id);
+                                      setDetailOrUpdate(true);
+                                      setOpen(true);
+                                    }}
+                                  >
+                                    Düzenle
+                                  </Button>
                                   <Button
                                     variant="outlined"
                                     onClick={(e) => {
-                                      e.stopPropagation(); 
+                                      e.stopPropagation();
                                       deleteOrder(orderData._id);
                                     }}
                                   >
@@ -337,6 +351,7 @@ const CariComp = () => {
         open={open}
         handleClose={handleClose}
         OrderDetail={OrderDetail}
+        detailOrUpdate={detailOrUpdate}
       />
       <CariAddingModal
         openAddingModal={openAddingModal}

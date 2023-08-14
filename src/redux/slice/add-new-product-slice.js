@@ -8,6 +8,13 @@ export const addNewProductSlice = createSlice({
     status: undefined,
     isLoading: false,
   },
+  reducers: {
+    resetAddProduct: state => {
+      state.data = undefined;
+      state.isLoading = {};
+      state.status = {};
+  },
+  },
   extraReducers: {
     // İşlem başladığında (pending)
     [addNewProductProcess.pending]: (state) => {
@@ -22,9 +29,12 @@ export const addNewProductSlice = createSlice({
     // İşlem başarısız olduğunda (rejected)
     [addNewProductProcess.rejected]: (state) => {
       state.isLoading = false;
-      state.error = "Ürün eklenirken bir hata oluştu"; // Hata durumunda error alanına bir mesaj atanabilir
+      state.error = "Ürün eklenirken bir hata oluştu";
+      state.status = "error";
     },
   },
 });
 
+
+export const { resetAddProduct } = addNewProductSlice.actions;
 export default addNewProductSlice.reducer;

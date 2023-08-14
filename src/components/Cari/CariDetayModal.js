@@ -29,7 +29,7 @@ function encryptData(data) {
   return encryptedData;
 }
 
-const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
+const CariDetayModal = ({ open, handleClose, OrderDetail, detailOrUpdate }) => {
   const [modalTcNumber, setModalTcNumber] = useState("");
   const [modalIsim, setModalIsim] = useState("");
   const [modalEmail, setModalEmail] = useState("");
@@ -114,11 +114,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Tc No :
               </label>
-              <Input
-                value={modalTcNumber}
-                onChange={(e) => setModalTcNumber(e.target.value)}
-                className="w-3/5"
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalTcNumber}
+                  onChange={(e) => setModalTcNumber(e.target.value)}
+                  className="w-3/5"
+                />
+              ) : (
+                <Input value={modalTcNumber} className="w-3/5" />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -129,11 +133,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Cari İsmi :
               </label>
-              <Input
-                value={modalIsim}
-                className="w-3/5"
-                onChange={(e) => setModalIsim(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalIsim}
+                  className="w-3/5"
+                  onChange={(e) => setModalIsim(e.target.value)}
+                />
+              ) : (
+                <Input value={modalIsim} className="w-3/5" />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -144,11 +152,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Email :
               </label>
-              <Input
-                value={modalEmail}
-                className="w-3/5"
-                onChange={(e) => setModalEmail(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalEmail}
+                  className="w-3/5"
+                  onChange={(e) => setModalEmail(e.target.value)}
+                />
+              ) : (
+                <Input value={modalEmail} className="w-3/5" />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -159,11 +171,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Telefon :
               </label>
-              <Input
-                value={modalTelefon}
-                className="w-3/5"
-                onChange={(e) => setModalTelefon(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalTelefon}
+                  className="w-3/5"
+                  onChange={(e) => setModalTelefon(e.target.value)}
+                />
+              ) : (
+                <Input value={modalTelefon} className="w-3/5" />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -174,11 +190,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Adres :
               </label>
-              <Input
-                value={modalAdres}
-                className="w-3/5"
-                onChange={(e) => setModalAdres(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalAdres}
+                  className="w-3/5"
+                  onChange={(e) => setModalAdres(e.target.value)}
+                />
+              ) : (
+                <Input value={modalAdres} className="w-3/5" />
+              )}
             </Typography>
             <Typography
               id="transition-modal-title"
@@ -189,11 +209,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Özellik :
               </label>
-              <Input
-                value={modalOzellik}
-                className="w-3/5"
-                onChange={(e) => setModalOzellik(e.target.value)}
-              />
+              {detailOrUpdate ? (
+                <Input
+                  value={modalOzellik}
+                  className="w-3/5"
+                  onChange={(e) => setModalOzellik(e.target.value)}
+                />
+              ) : (
+                <Input value={modalOzellik} className="w-3/5" />
+              )}
             </Typography>
 
             <div className="w-full flex justify-end mt-4 gap-6">
@@ -204,13 +228,15 @@ const CariDetayModal = ({ open, handleClose, OrderDetail }) => {
               >
                 Carinin geçmiş işlemlerini görüntüle
               </Button>
-              <Button
-                type="primary"
-                className="bg-blue-700"
-                onClick={updateOrder}
-              >
-                Kaydet
-              </Button>
+              {detailOrUpdate ? (
+                <Button
+                  type="primary"
+                  className="bg-blue-700"
+                  onClick={updateOrder}
+                >
+                  Kaydet
+                </Button>
+              ) : null}
             </div>
           </Box>
         </Fade>
