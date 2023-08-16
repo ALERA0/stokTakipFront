@@ -8,6 +8,13 @@ export const updateIncomingDocProductQuantitySlice = createSlice({
         status: undefined,
         isLoading: false,
     },
+    reducers: {
+        resetIncomingProductQuantityUpdate: state => {
+            state.isLoading = {};
+            state.status = {};
+            state.message = {};
+        },
+    },
     extraReducers: {
         [updateIncomingDocProductQuantityProcess.pending]: (state) => {
             state.isLoading = true;
@@ -22,8 +29,11 @@ export const updateIncomingDocProductQuantitySlice = createSlice({
         },
         [updateIncomingDocProductQuantityProcess.rejected]: (state) => {
             state.isLoading = false;
+            state.status = "error";
         }
     },
 });
+
+export const { resetIncomingProductQuantityUpdate } = updateIncomingDocProductQuantitySlice.actions;
 
 export default updateIncomingDocProductQuantitySlice.reducer;

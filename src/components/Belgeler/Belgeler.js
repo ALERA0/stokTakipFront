@@ -6,7 +6,7 @@ import {
   getOutgoingProductDetailProcess,
   getOutgoingProductsProcess,
 } from "@/src/api";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BelgeDetayModal from "./BelgeDetayModal";
 import Paper from "@mui/material/Paper";
@@ -25,6 +25,7 @@ import { resetOutgoingProductDetail } from "@/src/redux/slice/get-outgoing-produ
 import add from "../../../public/images/add.png";
 import Image from "next/image";
 import BelgeSecmeModal from "./BelgeSecmeModal";
+import { AppContext } from "@/src/pages/_app";
 
 const columns = [
   {
@@ -69,6 +70,9 @@ const Belgeler = () => {
   const [selectedTab, setSelectedTab] = useState("Hepsi");
   const [belgeModal, setBelgeModal] = useState(false);
   const router = useRouter();
+  const { searchQuery } = useContext(AppContext);
+  const [filteredProducts, setFilteredProducts] = useState([])
+
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setBelgeModal(false);
@@ -146,6 +150,20 @@ const Belgeler = () => {
     }
   }
 
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = filteredData?.filter((document) =>
+      document.documentNumber.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+      console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
+    } else {
+      setFilteredProducts(filteredData);
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    }
+  }, [searchQuery, filteredData]);
+
+
   const handleDocumentDetail = (_id, ozellik) => {
     ozellik == 1
       ? dispatch(getIncomingProductDetailProcess({ incomingProductId: _id }))
@@ -212,8 +230,8 @@ const Belgeler = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData &&
-                filteredData
+              {filteredProducts &&
+                filteredProducts
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((documentData) => {
                     return (

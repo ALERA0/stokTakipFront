@@ -206,16 +206,8 @@ const addNewOrderProcess = createAsyncThunk(
   "newOrder/addNewOrderProcess",
   async (data) => {
     const { tcNumber, isim, email, telefon, adres, ozellik } = data;
-    const params = new FormData();
-    params.append("tcNumber", tcNumber);
-    params.append("isim", isim);
-    params.append("email", email);
-    params.append("telefon", telefon);
-    params.append("adres", adres);
-    params.append("ozellik", ozellik);
-
     try {
-      const res = await axios.post("newOrder", params);
+      const res = await axios.post("newOrder", data);
       return res.data;
     } catch (error) {
       throw error;
@@ -346,7 +338,7 @@ const updateIncomingDocProductQuantityProcess = createAsyncThunk(
       const res = await axios.post("updateIncomingProductQuantity", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -364,7 +356,7 @@ const updateOutgoingDocProductQuantityProcess = createAsyncThunk(
       const res = await axios.post("updateOutgoingProductQuantity", params);
       return res.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 );
@@ -376,8 +368,12 @@ const deleteProductFromIncomingProductProcess = createAsyncThunk(
     const params = new FormData();
     params.append("incomingProductId", incomingProductId);
     params.append("rowId", rowId);
-    const res = await axios.post("removeProduct", params);
-    return res.data;
+    try {
+      const res = await axios.post("removeProduct", params);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
@@ -388,8 +384,12 @@ const deleteProductFromOutgoingProductProcess = createAsyncThunk(
     const params = new FormData();
     params.append("outgoingProductId", outgoingProductId);
     params.append("rowId", rowId);
-    const res = await axios.post("removeOutgoingProduct", params);
-    return res.data;
+    try {
+      const res = await axios.post("removeOutgoingProduct", params);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 

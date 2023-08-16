@@ -210,15 +210,7 @@ const CariDetayModal = ({ open, handleClose, OrderDetail, detailOrUpdate }) => {
               <label className="text-lg font-bold text-center w-2/5 flex justify-end">
                 Özellik :
               </label>
-              {detailOrUpdate ? (
-                <Input
-                  value={modalOzellik}
-                  className="w-3/5"
-                  onChange={(e) => setModalOzellik(e.target.value)}
-                />
-              ) : (
-                <Input value={modalOzellik} className="w-3/5" />
-              )}
+              <Input value={modalOzellik} className="w-3/5" readOnly />
             </Typography>
 
             <div className="w-full flex justify-end mt-4 gap-6">

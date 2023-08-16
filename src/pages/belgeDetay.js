@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -39,6 +39,11 @@ import {
 import { resetAddOutgoingProduct } from "../redux/slice/add-outgoing-product-slice";
 import { resetUpdateIncomingDoc } from "../redux/slice/update-incoming-doc-slice";
 import { resetUpdateOutgoingDoc } from "../redux/slice/update-outgoing-doc-slice";
+import { AppContext } from "./_app";
+import { resetIncomingProductDelete } from "../redux/slice/delete-product-from-incoming-product-slice";
+import { resetOutgoingProductDelete } from "../redux/slice/delete-product-from-outgoing-product-slice";
+import { resetIncomingProductQuantityUpdate } from "../redux/slice/update-incoming-doc-product-quantity-slice";
+import { resetOutgoingProductQuantityUpdate } from "../redux/slice/update-outgoing-doc-product-quantity-slice";
 
 const columns = [
   {
@@ -78,6 +83,9 @@ const belgeDetay = () => {
   const dispatch = useDispatch();
   const [selectedProductData, setSelectedProductData] = useState(null);
   const router = useRouter();
+  const { searchQuery } = useContext(AppContext);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -165,11 +173,11 @@ const belgeDetay = () => {
     }
     if (isGelen) {
       await dispatch(
-        getIncomingProductDetailProcess({ incomingProductId: data._id })
+        getIncomingProductDetailProcess({ incomingProductId: data?._id })
       );
-    } else {
+    } else if(!isGelen) {
       await dispatch(
-        getOutgoingProductDetailProcess({ outgoingProductId: data._id })
+        getOutgoingProductDetailProcess({ outgoingProductId: data?._id })
       );
     }
     setSilmeModalAcilmasin(false);
@@ -252,6 +260,35 @@ const belgeDetay = () => {
     (state) => state.updateOutgoingProduct
   );
 
+  const { status: removeProductStatus } = useSelector(
+    (state) => state.removeProduct
+  );
+
+  const { status: removeOutgoingProductStatus } = useSelector(
+    (state) => state.removeOutgoingProduct
+  );
+
+  const { status: updateIncomingProductQuantityStatus } = useSelector(
+    (state) => state.updateIncomingProductQuantity
+  );
+
+  const { status: updateOutgoingProductQuantityStatus } = useSelector(
+    (state) => state.updateOutgoingProductQuantity
+  );
+
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = productDetails?.filter((document) =>
+        document.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+      console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
+    } else {
+      setFilteredProducts(productDetails);
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    }
+  }, [searchQuery, productDetails]);
+
   useEffect(() => {
     if (addIncomingProductStatus === "success") {
       console.log("SHOW TOAST SUCCESS 2222");
@@ -289,11 +326,61 @@ const belgeDetay = () => {
       showToastErrorMessage("Belge Güncellenemedi");
       dispatch(resetUpdateOutgoingDoc());
     }
+    if (
+      removeProductStatus.deleteProductFromIncomingProductProcess === "success"
+    ) {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Ürün Çıkartıldı");
+      dispatch(resetIncomingProductDelete());
+    } else if (
+      removeProductStatus.deleteProductFromIncomingProductProcess === "error"
+    ) {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Ürün Çıkartılamadı");
+      dispatch(resetIncomingProductDelete());
+    }
+    if (
+      removeOutgoingProductStatus.deleteProductFromOutgoingProductProcess ===
+      "success"
+    ) {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Ürün Çıkartıldı");
+      dispatch(resetOutgoingProductDelete());
+    } else if (
+      removeOutgoingProductStatus.deleteProductFromOutgoingProductProcess ===
+      "error"
+    ) {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Ürün Çıkartılamadı");
+      dispatch(resetOutgoingProductDelete());
+    }
+    if (updateIncomingProductQuantityStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Ürün Güncellendi");
+      dispatch(resetIncomingProductQuantityUpdate());
+    } else if (updateIncomingProductQuantityStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Ürün Güncellenemedi");
+      dispatch(resetIncomingProductQuantityUpdate());
+    }
+    if (updateOutgoingProductQuantityStatus === "success") {
+      console.log("SHOW TOAST SUCCESS 2222");
+      showToastSuccesMessage("Ürün Güncellendi");
+      dispatch(resetOutgoingProductQuantityUpdate());
+    } else if (updateOutgoingProductQuantityStatus === "error") {
+      console.log("SHOW TOAST SUCCESS 333");
+      showToastErrorMessage("Ürün Güncellenemedi");
+      dispatch(resetOutgoingProductQuantityUpdate());
+    }
   }, [
     addIncomingProductStatus,
     addOutgoingProductStatus,
     updateIncomingProductDocStatus,
-    updateOutgoingProductDocStatus
+    updateOutgoingProductDocStatus,
+    removeProductStatus.deleteProductFromIncomingProductProcess,
+    removeOutgoingProductStatus.deleteProductFromOutgoingProductProcess,
+    updateIncomingProductQuantityStatus,
+    updateOutgoingProductQuantityStatus,
   ]);
 
   return (
@@ -445,8 +532,8 @@ const belgeDetay = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {productDetails &&
-                      productDetails.map((productData) => {
+                    {filteredProducts &&
+                      filteredProducts.map((productData) => {
                         return (
                           <TableRow
                             key={productData._id}

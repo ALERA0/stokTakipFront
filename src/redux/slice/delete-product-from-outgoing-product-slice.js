@@ -10,7 +10,7 @@ export const deleteProductFromOutgoingProductSlice = createSlice({
         message: {},
     },
     reducers: {
-        resetProductDelete: state => {
+        resetOutgoingProductDelete: state => {
             state.isLoading = {};
             state.status = {};
             state.message = {};
@@ -34,10 +34,12 @@ export const deleteProductFromOutgoingProductSlice = createSlice({
         },
         [deleteProductFromOutgoingProductProcess.rejected]: (state, action) => {
             state.isLoading = { ...state.isLoading, deleteProductFromOutgoingProductProcess: false };
+            state.status = "error";
+
         },
     },
 });
 
 
-export const { resetProductDelete } = deleteProductFromOutgoingProductSlice.actions;
+export const { resetOutgoingProductDelete } = deleteProductFromOutgoingProductSlice.actions;
 export default deleteProductFromOutgoingProductSlice.reducer;

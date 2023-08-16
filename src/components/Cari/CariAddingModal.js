@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { Button, Checkbox, Form, Input } from "antd";
+import { FormControlLabel, FormGroup } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -35,6 +36,10 @@ const CariAddingModal = ({
   handleTelefonChange,
   handleAdresChange,
   handleOzellikChange,
+  isSelected1,
+  setSelection1,
+  isSelected2,
+  setSelection2,
 }) => {
   return (
     <div>
@@ -140,11 +145,20 @@ const CariAddingModal = ({
               <label className="text-lg font-bold text-center w-2/5 flex justify-end ">
                 Özellik :
               </label>
-              <Input
-                value={ozellik}
-                className="w-3/5"
-                onChange={handleOzellikChange}
-              />
+              <FormGroup className="flex flex-row gap-2 pl-3 ">
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Tedarikçi"
+                  value={isSelected1}
+                  onChange={setSelection1}
+                />
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Müşteri"
+                  value={isSelected2}
+                  onChange={setSelection2}
+                />
+              </FormGroup>
             </Typography>
             <div className="w-full flex justify-end mt-3 ">
               <Button

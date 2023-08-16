@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -30,6 +30,7 @@ import {
 } from "../ToastComponent";
 import { resetUpdateOrder } from "@/src/redux/slice/update-order-slice";
 import { resetDeleteOrder } from "@/src/redux/slice/delete-order-slice";
+import { AppContext } from "@/src/pages/_app";
 
 const columns = [
   {
@@ -69,6 +70,8 @@ const CariComp = () => {
   const [openAddingModal, setOpenAddingModal] = useState(false);
   const dispatch = useDispatch();
   const [detailOrUpdate, setDetailOrUpdate] = useState(false);
+  const { searchQuery } = useContext(AppContext);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -130,6 +133,8 @@ const CariComp = () => {
   const [telefon, setTelefon] = useState();
   const [adres, setAdres] = useState("");
   const [ozellik, setOzellik] = useState("Tedarikçi");
+  const [isSelected1, setSelection1] = useState(false);
+  const [isSelected2, setSelection2] = useState(false);
 
   const handleIsimChange = (e) => setIsim(e.target.value);
   const handleTcNumberChange = (e) => setTcNumber(e.target.value);
@@ -143,6 +148,16 @@ const CariComp = () => {
   const handleAddingModalOpen = () => setOpenAddingModal(true);
   const handleAddingModalClose = () => setOpenAddingModal(false);
 
+  let ozellikValue = [];
+
+  if (isSelected1) {
+      ozellikValue.push('Müşteri');
+  }
+
+  if (isSelected2) {
+      ozellikValue.push('Tedarikçi');
+  }
+
   const addNewOrder = async () => {
     await dispatch(
       addNewOrderProcess({
@@ -151,7 +166,7 @@ const CariComp = () => {
         email: email,
         telefon: telefon,
         adres: adres,
-        ozellik: ozellik,
+        ozellik: ozellikValue,
       })
     );
     await dispatch(getAllOrdersProcess());
@@ -202,6 +217,19 @@ const CariComp = () => {
   } else {
     filteredData = allOrders;
   }
+
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = filteredData?.filter((order) =>
+        order.isim.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+      console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
+    } else {
+      setFilteredProducts(filteredData);
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    }
+  }, [searchQuery, filteredData]);
 
   useEffect(() => {
     if (newOrderStatus === "succes") {
@@ -279,8 +307,8 @@ const CariComp = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData &&
-                filteredData
+              {filteredProducts &&
+                filteredProducts
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((orderData) => {
                     return (
@@ -390,6 +418,10 @@ const CariComp = () => {
         handleClose={handleClose}
         OrderDetail={OrderDetail}
         detailOrUpdate={detailOrUpdate}
+        isSelected1={isSelected1}
+        setSelection1={setSelection1}
+        isSelected2={isSelected2}
+        setSelection2={setSelection2}
       />
       <CariAddingModal
         openAddingModal={openAddingModal}
@@ -408,6 +440,10 @@ const CariComp = () => {
         handleTelefonChange={handleTelefonChange}
         handleAdresChange={handleAdresChange}
         handleOzellikChange={handleOzellikChange}
+        isSelected1={isSelected1}
+        setSelection1={setSelection1}
+        isSelected2={isSelected2}
+        setSelection2={setSelection2}
       />
     </div>
   );

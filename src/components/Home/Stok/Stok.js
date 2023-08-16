@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -39,6 +39,7 @@ import {
 import { resetUpdateProduct } from "@/src/redux/slice/update-product-slice";
 import { resetAddIncomingProductToIncomingProduct } from "@/src/redux/slice/add-incoming-product-to-incoming-product-slice";
 import { resetAddIncomingProductToOutgoingProduct } from "@/src/redux/slice/add-incoming-product-to-outgoing-product-slice";
+import { AppContext } from "@/src/pages/_app";
 
 const displayImage = (base64String) => {
   return (
@@ -107,6 +108,7 @@ const Stok = () => {
   const [productDescription, setProductDescription] = useState("");
   const [detailOrUpdate, setDetailOrUpdate] = useState(false);
   const [alertState, setAlertState] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState([])
   // Yeni ürün bilgilerini state'lerle güncellemek için handleChange fonksiyonları
   const handleProductNameChange = (e) => setProductName(e.target.value);
   const handleProductCodeChange = (e) => setProductCode(e.target.value);
@@ -135,6 +137,7 @@ const Stok = () => {
   const documentId = router.query.a2;
   const decryptedPageStok = decryptData(pageStok ? pageStok : null);
   const decryptedDocumentId = decryptData(documentId ? documentId : null);
+  const { searchQuery } = useContext(AppContext);
 
   const { data: AllProductData } = useSelector((state) => state.getAllProducts);
   const { status: DeleteProductStatus } = useSelector(
@@ -253,6 +256,21 @@ const Stok = () => {
     }
   };
 
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = AllProductData.filter((product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+      console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
+    } else {
+      setFilteredProducts(AllProductData);
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    }
+  }, [searchQuery, AllProductData]);
+
+
+
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col   ">
       <div className="w-full flex justify-between items-center mb-6 ">
@@ -290,8 +308,8 @@ const Stok = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {AllProductData &&
-                AllProductData.slice(
+              {filteredProducts  &&
+                filteredProducts.slice(
                   page * rowsPerPage,
                   page * rowsPerPage + rowsPerPage
                 ).map((productData) => {
