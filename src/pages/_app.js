@@ -10,6 +10,7 @@ import { store } from "../redux/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createContext, useState } from "react";
+import Footer from "../components/Footer";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -42,6 +43,7 @@ export default function App({ Component, pageProps }) {
             </div>
           )}
           {isLoginPage && <Component {...pageProps} />}
+          <Footer />
         </main>
       </AppContext.Provider>
     </Provider>

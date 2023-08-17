@@ -40,6 +40,7 @@ import { resetUpdateProduct } from "@/src/redux/slice/update-product-slice";
 import { resetAddIncomingProductToIncomingProduct } from "@/src/redux/slice/add-incoming-product-to-incoming-product-slice";
 import { resetAddIncomingProductToOutgoingProduct } from "@/src/redux/slice/add-incoming-product-to-outgoing-product-slice";
 import { AppContext } from "@/src/pages/_app";
+import DeleteModal from "../../DeleteModal";
 
 const displayImage = (base64String) => {
   return (
@@ -108,7 +109,10 @@ const Stok = () => {
   const [productDescription, setProductDescription] = useState("");
   const [detailOrUpdate, setDetailOrUpdate] = useState(false);
   const [alertState, setAlertState] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState([])
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [belgeyeDon, setBelgeyeDon] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   // Yeni ürün bilgilerini state'lerle güncellemek için handleChange fonksiyonları
   const handleProductNameChange = (e) => setProductName(e.target.value);
   const handleProductCodeChange = (e) => setProductCode(e.target.value);
@@ -121,7 +125,8 @@ const Stok = () => {
   const handleProductAddressChange = (e) => setProductAddress(e.target.value);
   const handleProductDescriptionChange = (e) =>
     setProductDescription(e.target.value);
-
+  const handleOpenDeleteModal = () => setOpenDeleteModal(true);
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleCloseBelgedenGelenModalOpen = () =>
@@ -155,6 +160,18 @@ const Stok = () => {
     (state) => state.addProductToOutgoingProduct
   );
 
+  const handleBelgeDetay = () => {
+    router.push("/belgeDetay");
+  };
+
+  useEffect(() => {
+    if (decryptedPageStok == 1 || decryptedPageStok == 2) {
+      setBelgeyeDon(true);
+    } else {
+      setBelgeyeDon(false);
+    }
+  }, [decryptedPageStok]);
+
   const handleProductDetail = (_id) => {
     console.log(decryptedPageStok, "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     dispatch(getProductDetailProcess({ _id }));
@@ -181,6 +198,15 @@ const Stok = () => {
     );
     await dispatch(getAllProductsProcess());
     handleAddingModalClose();
+    await setProductName("");
+    await setProductCode("");
+    await setProductImage("");
+    await setProductQuantity("");
+    await setProductPrice("");
+    await setProductPackageType("");
+    await setProductBarcode("");
+    await setProductAddress("");
+    await setProductDescription("");
   };
 
   useEffect(() => {
@@ -247,10 +273,19 @@ const Stok = () => {
     };
   }, []);
 
+  const handleDeleteProduct = async () => {
+    try {
+      await deleteProduct(selectedProductId);
+      await dispatch(getAllProductsProcess());
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Ürün silme işlemi başarısız oldu:", error);
+    }
+  };
+
   const deleteProduct = async (_id) => {
     try {
       await dispatch(productDeleteProcess({ _id }));
-      await dispatch(getAllProductsProcess());
     } catch (error) {
       console.log(error);
     }
@@ -265,11 +300,9 @@ const Stok = () => {
       console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
     } else {
       setFilteredProducts(AllProductData);
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
   }, [searchQuery, AllProductData]);
-
-
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col   ">
@@ -277,18 +310,28 @@ const Stok = () => {
         <h2 className="lg:text-2xl md:text-xl text-lg font-bold  flex justify-center">
           Ürün Stoğu
         </h2>
-        <Button
-          className="flex lg:gap-3 md:gap-2 gap-1 hover:bg-blue-900 hover:text-white duration-500"
-          onClick={handleAddingModalOpen}
-        >
-          <h2 className="lg:text-xl md:text-lg text-xs">Yeni Ürün Oluştur</h2>
-          <Image
-            src={add}
-            alt="Ürün Ekle"
-            className="cursor-pointer"
-            width={30}
-          />
-        </Button>
+        <div className="flex gap-6">
+          {belgeyeDon ? (
+            <button
+              className="bg-green-800 text-white hover:bg-green-900 duration-300 hover:shadow-lg px-2"
+              onClick={handleBelgeDetay}
+            >
+              Belge Detayına Dön
+            </button>
+          ) : null}
+          <Button
+            className="flex lg:gap-3 md:gap-2 gap-1 hover:bg-blue-900 hover:text-white duration-500"
+            onClick={handleAddingModalOpen}
+          >
+            <h2 className="lg:text-xl md:text-lg text-xs">Yeni Ürün Oluştur</h2>
+            <Image
+              src={add}
+              alt="Ürün Ekle"
+              className="cursor-pointer"
+              width={30}
+            />
+          </Button>
+        </div>
       </div>
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -308,12 +351,10 @@ const Stok = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredProducts  &&
-                filteredProducts.slice(
-                  page * rowsPerPage,
-                  page * rowsPerPage + rowsPerPage
-                ).map((productData) => {
-                  return (
+              {filteredProducts && filteredProducts.length > 0 ? (
+                filteredProducts
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((productData) => (
                     <TableRow
                       hover
                       role="checkbox"
@@ -384,7 +425,8 @@ const Stok = () => {
                                   variant="outlined"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    deleteProduct(productData._id);
+                                    setSelectedProductId(productData._id);
+                                    handleOpenDeleteModal();
                                   }}
                                 >
                                   Sil
@@ -399,8 +441,14 @@ const Stok = () => {
                         );
                       })}
                     </TableRow>
-                  );
-                })}
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    Aradığınız isimde ürün bulunamadı.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -451,6 +499,11 @@ const Stok = () => {
         handleProductBarcodeChange={handleProductBarcodeChange}
         handleProductAddressChange={handleProductAddressChange}
         handleProductDescriptionChange={handleProductDescriptionChange}
+      />
+      <DeleteModal
+        open={openDeleteModal}
+        handleDeleteProduct={handleDeleteProduct}
+        handleCloseDeleteModal={handleCloseDeleteModal}
       />
     </div>
   );

@@ -119,6 +119,8 @@ const CariAddingModal = ({
                 value={telefon}
                 className="w-3/5"
                 onChange={handleTelefonChange}
+                placeholder="0555-555-55-55"
+                maxLength={11}
               />
             </Typography>
             <Typography

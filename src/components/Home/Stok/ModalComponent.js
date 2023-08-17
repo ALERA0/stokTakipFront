@@ -44,7 +44,7 @@ const ModalComponent = ({
     if (ProductDetail) {
       setUrunAdi(ProductDetail.productName);
       setSK(ProductDetail.productCode);
-      setFiyat(ProductDetail.productPrice.toString());
+      setFiyat(ProductDetail.productPrice?.toString());
       setBarkod(ProductDetail.productBarcode);
       setAciklama(ProductDetail.productDescription);
       setAdres(ProductDetail.productAddress);

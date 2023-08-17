@@ -44,6 +44,7 @@ import { resetIncomingProductDelete } from "../redux/slice/delete-product-from-i
 import { resetOutgoingProductDelete } from "../redux/slice/delete-product-from-outgoing-product-slice";
 import { resetIncomingProductQuantityUpdate } from "../redux/slice/update-incoming-doc-product-quantity-slice";
 import { resetOutgoingProductQuantityUpdate } from "../redux/slice/update-outgoing-doc-product-quantity-slice";
+import DeleteModal from "../components/DeleteModal";
 
 const columns = [
   {
@@ -79,12 +80,16 @@ const belgeDetay = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = useState(false);
-  const [silmeModalAcilmasin, setSilmeModalAcilmasin] = useState(true);
   const dispatch = useDispatch();
   const [selectedProductData, setSelectedProductData] = useState(null);
   const router = useRouter();
   const { searchQuery } = useContext(AppContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const handleOpenDeleteModal = () => setOpenDeleteModal(true);
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -152,7 +157,16 @@ const belgeDetay = () => {
 
   console.log(addIncomingProductStatus, "STATUSSSSSSSSSSSSSSSSSSSS");
 
-  const handleDeleteProductFromDocument = async (productRowId) => {
+  const handleDeleteProduct = async () => {
+    try {
+      await deleteProductFromDocument(selectedProductId);
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Ürün silme işlemi başarısız oldu:", error);
+    }
+  };
+
+  const deleteProductFromDocument = async (productRowId) => {
     console.log(productRowId, "PRODUCT ROW ID: ");
     console.log(data._id, "DATA ID :");
 
@@ -175,12 +189,11 @@ const belgeDetay = () => {
       await dispatch(
         getIncomingProductDetailProcess({ incomingProductId: data?._id })
       );
-    } else if(!isGelen) {
+    } else if (!isGelen) {
       await dispatch(
         getOutgoingProductDetailProcess({ outgoingProductId: data?._id })
       );
     }
-    setSilmeModalAcilmasin(false);
 
     setOpen(false);
   };
@@ -531,92 +544,94 @@ const belgeDetay = () => {
                       ))}
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {filteredProducts &&
-                      filteredProducts.map((productData) => {
-                        return (
-                          <TableRow
-                            key={productData._id}
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            onClick={() => handleOpenModal(productData)}
-                            className="cursor-pointer"
-                          >
-                            {columns.map((column) => {
-                              const value = productData[column.id];
+                  <TableBody></TableBody>
+                  {filteredProducts && filteredProducts.length > 0 ? (
+                    filteredProducts.map((productData) => (
+                      <TableRow
+                        key={productData._id}
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        onClick={() => handleOpenModal(productData)}
+                        className="cursor-pointer"
+                      >
+                        {columns.map((column) => {
+                          const value = productData[column.id];
 
-                              return (
-                                <TableCell key={column.id} align={column.align}>
-                                  {column.id === "product" ? (
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "product" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {productData?.productImage?.data ? (
                                     <div
                                       style={{
-                                        display: "flex",
-                                        alignItems: "center",
+                                        maxWidth: "80px",
+                                        maxHeight: "100px",
                                       }}
                                     >
-                                      {productData?.productImage?.data ? (
-                                        <div
-                                          style={{
-                                            maxWidth: "80px",
-                                            maxHeight: "100px",
-                                          }}
-                                        >
-                                          {column.render(productData)}
-                                        </div>
-                                      ) : (
-                                        <div
-                                          style={{
-                                            maxWidth: "80px",
-                                            maxHeight: "100px",
-                                          }}
-                                        >
-                                          <Image
-                                            src={logo2}
-                                            alt="Logo"
-                                            layout="responsive"
-                                            width={80}
-                                            height={100}
-                                            objectFit="contain"
-                                            className="min-h-[40px]"
-                                          />
-                                        </div>
-                                      )}
-                                      <span style={{ marginLeft: "10px" }}>
-                                        {productData?.product?.productName}
-                                      </span>
+                                      {column.render(productData)}
                                     </div>
-                                  ) : column.id === "quantity" ? (
-                                    // Eklendi: Adet değerini burada render ediyoruz
-                                    productData.quantity
-                                  ) : column.id === "actions" ? (
-                                    // İşlemler sütununu render edin
-                                    <div className="flex justify-start items-center">
-                                      <Button
-                                        variant="outlined"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteProductFromDocument(
-                                            productData._id
-                                          );
-                                        }}
-                                      >
-                                        Sil
-                                      </Button>
-                                    </div>
-                                  ) : column.format &&
-                                    typeof value === "number" ? (
-                                    column.format(value)
                                   ) : (
-                                    value
+                                    <div
+                                      style={{
+                                        maxWidth: "80px",
+                                        maxHeight: "100px",
+                                      }}
+                                    >
+                                      <Image
+                                        src={logo2}
+                                        alt="Logo"
+                                        layout="responsive"
+                                        width={80}
+                                        height={100}
+                                        objectFit="contain"
+                                        className="min-h-[40px]"
+                                      />
+                                    </div>
                                   )}
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
+                                  <span style={{ marginLeft: "10px" }}>
+                                    {productData?.product?.productName}
+                                  </span>
+                                </div>
+                              ) : column.id === "quantity" ? (
+                                // Eklendi: Adet değerini burada render ediyoruz
+                                productData.quantity
+                              ) : column.id === "actions" ? (
+                                // İşlemler sütununu render edin
+                                <div className="flex justify-start items-center">
+                                  <Button
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedProductId(productData._id);
+                                      handleOpenDeleteModal();
+                                    }}
+                                  >
+                                    Sil
+                                  </Button>
+                                </div>
+                              ) : column.format && typeof value === "number" ? (
+                                column.format(value)
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} align="center">
+                        Aradığınız ürün bulunamadı.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </Table>
               </TableContainer>
               <TablePagination
@@ -638,7 +653,11 @@ const belgeDetay = () => {
           productData={selectedProductData}
           isGelen={isGelen}
         />
-
+        <DeleteModal
+          open={openDeleteModal}
+          handleDeleteProduct={handleDeleteProduct}
+          handleCloseDeleteModal={handleCloseDeleteModal}
+        />
         {/* Burada belge detayları ve güncelleme işlemleri yapabilirsiniz */}
       </div>
     </div>

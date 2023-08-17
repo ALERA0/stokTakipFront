@@ -47,7 +47,6 @@ const columns = [
     label: "Açıklama",
     minWidth: 100,
   },
-
 ];
 
 const tabOptions = [
@@ -71,8 +70,7 @@ const Belgeler = () => {
   const [belgeModal, setBelgeModal] = useState(false);
   const router = useRouter();
   const { searchQuery } = useContext(AppContext);
-  const [filteredProducts, setFilteredProducts] = useState([])
-
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setBelgeModal(false);
@@ -153,16 +151,17 @@ const Belgeler = () => {
   useEffect(() => {
     if (searchQuery) {
       const filtered = filteredData?.filter((document) =>
-      document.documentNumber.toLowerCase().includes(searchQuery.toLowerCase())
+        document.documentNumber
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
       );
       setFilteredProducts(filtered);
       console.log(filtered, "filtereeeeeeeeeeeeeeeeeeeeeeeed");
     } else {
       setFilteredProducts(filteredData);
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
   }, [searchQuery, filteredData]);
-
 
   const handleDocumentDetail = (_id, ozellik) => {
     ozellik == 1
@@ -230,91 +229,95 @@ const Belgeler = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredProducts &&
+              {filteredProducts && filteredProducts.length > 0 ? (
                 filteredProducts
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((documentData) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={documentData._id}
-                        onClick={() =>
-                          handleDocumentDetail(
-                            documentData._id,
-                            documentData.ozellik
-                          )
-                        }
-                        className="cursor-pointer"
-                      >
-                        {columns.map((column) => {
-                          const value = documentData[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.id === "productImage" ? (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  {documentData.productImage?.data ? (
-                                    <div
-                                      style={{
-                                        maxWidth: "80px",
-                                        maxHeight: "100px",
-                                      }}
-                                    >
-                                      {column.render(documentData)}
-                                    </div>
-                                  ) : (
-                                    <div
-                                      style={{
-                                        maxWidth: "80px",
-                                        maxHeight: "100px",
-                                      }}
-                                    >
-                                      <Image
-                                        src={logo2}
-                                        alt="Logo"
-                                        layout="responsive"
-                                        width={80}
-                                        height={100}
-                                        objectFit="contain"
-                                        className="min-h-[40px]"
-                                      />
-                                    </div>
-                                  )}
-                                </div>
-                              
-                              ) : column.format && typeof value === "number" ? (
-                                <span
-                                  style={{
-                                    color: column.colorFormat
-                                      ? column.colorFormat(value)
-                                      : "inherit",
-                                  }}
-                                >
-                                  {column.format(value)}
-                                </span>
-                              ) : (
-                                <span
-                                  style={{
-                                    color: column.colorFormat
-                                      ? column.colorFormat(value)
-                                      : "inherit",
-                                  }}
-                                >
-                                  {value}
-                                </span>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
+                  .map((documentData) => (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={documentData._id}
+                      onClick={() =>
+                        handleDocumentDetail(
+                          documentData._id,
+                          documentData.ozellik
+                        )
+                      }
+                      className="cursor-pointer"
+                    >
+                      {columns.map((column) => {
+                        const value = documentData[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.id === "productImage" ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                {documentData.productImage?.data ? (
+                                  <div
+                                    style={{
+                                      maxWidth: "80px",
+                                      maxHeight: "100px",
+                                    }}
+                                  >
+                                    {column.render(documentData)}
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      maxWidth: "80px",
+                                      maxHeight: "100px",
+                                    }}
+                                  >
+                                    <Image
+                                      src={logo2}
+                                      alt="Logo"
+                                      layout="responsive"
+                                      width={80}
+                                      height={100}
+                                      objectFit="contain"
+                                      className="min-h-[40px]"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ) : column.format && typeof value === "number" ? (
+                              <span
+                                style={{
+                                  color: column.colorFormat
+                                    ? column.colorFormat(value)
+                                    : "inherit",
+                                }}
+                              >
+                                {column.format(value)}
+                              </span>
+                            ) : (
+                              <span
+                                style={{
+                                  color: column.colorFormat
+                                    ? column.colorFormat(value)
+                                    : "inherit",
+                                }}
+                              >
+                                {value}
+                              </span>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    Aradığınız Belge Kodunda Veri Bulunamadı.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

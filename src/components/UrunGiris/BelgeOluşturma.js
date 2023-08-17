@@ -14,6 +14,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { TextareaAutosize } from "@mui/material";
 import { useRouter } from "next/router";
+import { resetOrderDetail } from "@/src/redux/slice/get-order-detail-slice";
 
 const defaultDocumentDate = new Date().toISOString().split("T")[0];
 
@@ -76,7 +77,13 @@ const BelgeOluşturma = () => {
       );
     }
 
-   await router.push("/belgeDetay");
+    await router.push("/belgeDetay");
+    await setDocumentNumber("");
+    await setOrder(null);
+    await setDescription("");
+    await setOrderName(null);
+    await dispatch(resetOrderDetail())
+    console.log(orderName,"ordereeeeeeee")
   };
   useEffect(() => {
     dispatch(getOrderDetailProcess({ _id: order }));
@@ -94,10 +101,8 @@ const BelgeOluşturma = () => {
 
   const options = pathname === "/urunGiris" ? tedarikciOrders : musteriOrders;
 
-  console.log(addIncomingProduct);
-  console.log(addOutgoingProduct?._id,"IDDDDDDDDDDDDDDDDDDDDDDDDD");
-
-
+  console.log(addIncomingProduct?._id, "INCOMİNG PRODUCT ID");
+  console.log(addOutgoingProduct?._id, "IDDDDDDDDDDDDDDDDDDDDDDDDD");
 
   return (
     <div className="h-full w-full bg-light rounded-lg pr-24 lg:pl-16 md:pl-8 pl-2 py-8 flex flex-col ">

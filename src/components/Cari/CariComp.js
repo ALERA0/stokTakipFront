@@ -31,6 +31,7 @@ import {
 import { resetUpdateOrder } from "@/src/redux/slice/update-order-slice";
 import { resetDeleteOrder } from "@/src/redux/slice/delete-order-slice";
 import { AppContext } from "@/src/pages/_app";
+import DeleteModal from "../DeleteModal";
 
 const columns = [
   {
@@ -77,13 +78,20 @@ const CariComp = () => {
     console.log("Failed:", errorInfo);
   };
 
+  const handleDeleteProduct = async () => {
+    try {
+      await deleteOrder(selectedProductId);
+      await dispatch(getAllOrdersProcess());
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Ürün silme işlemi başarısız oldu:", error);
+    }
+  };
+
   const deleteOrder = async (_id) => {
     try {
       await dispatch(deleteOrderProcess({ _id }));
-      await dispatch(getAllOrdersProcess());
-      // setIsDeleteAction(false); // Silme işlemi tamamlandı
     } catch (error) {
-      // Silme işlemi hata aldı, yine sıfırlayın
       console.log(error);
     }
   };
@@ -135,7 +143,11 @@ const CariComp = () => {
   const [ozellik, setOzellik] = useState("Tedarikçi");
   const [isSelected1, setSelection1] = useState(false);
   const [isSelected2, setSelection2] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleOpenDeleteModal = () => setOpenDeleteModal(true);
   const handleIsimChange = (e) => setIsim(e.target.value);
   const handleTcNumberChange = (e) => setTcNumber(e.target.value);
   const handleEmailChange = (e) => setEmail(e.target.value);
@@ -151,11 +163,11 @@ const CariComp = () => {
   let ozellikValue = [];
 
   if (isSelected1) {
-      ozellikValue.push('Müşteri');
+    ozellikValue.push("Müşteri");
   }
 
   if (isSelected2) {
-      ozellikValue.push('Tedarikçi');
+    ozellikValue.push("Tedarikçi");
   }
 
   const addNewOrder = async () => {
@@ -171,6 +183,11 @@ const CariComp = () => {
     );
     await dispatch(getAllOrdersProcess());
     handleAddingModalClose();
+    setTcNumber();
+    setIsim("");
+    setEmail("");
+    setTelefon();
+    setAdres("");
   };
 
   const handleChangePage = (event, newPage) => {
@@ -307,7 +324,7 @@ const CariComp = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredProducts &&
+              {filteredProducts && filteredProducts.length > 0 ? (
                 filteredProducts
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((orderData) => {
@@ -335,39 +352,13 @@ const CariComp = () => {
                                     alignItems: "center",
                                   }}
                                 >
-                                  {orderData.productImage?.data ? (
-                                    <div
-                                      style={{
-                                        maxWidth: "80px",
-                                        maxHeight: "100px",
-                                      }}
-                                    >
-                                      {column.render(orderData)}
-                                    </div>
-                                  ) : (
-                                    <div
-                                      style={{
-                                        maxWidth: "80px",
-                                        maxHeight: "100px",
-                                      }}
-                                    >
-                                      <Image
-                                        src={logo2}
-                                        alt="Logo"
-                                        layout="responsive"
-                                        width={80}
-                                        height={100}
-                                        objectFit="contain"
-                                        className="min-h-[40px]"
-                                      />
-                                    </div>
-                                  )}
+                                  {/* Ürün görselini veya placeholder görselini burada görüntüle */}
                                   <span style={{ marginLeft: "10px" }}>
                                     {orderData.productName}
                                   </span>
                                 </div>
                               ) : column.id === "actions" ? (
-                                <div className="flex relative  justify-start items-center gap-2 ">
+                                <div className="flex relative justify-start items-center gap-2 ">
                                   <Button
                                     variant="text"
                                     onClick={(e) => {
@@ -383,7 +374,8 @@ const CariComp = () => {
                                     variant="outlined"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      deleteOrder(orderData._id);
+                                      setSelectedProductId(orderData._id);
+                                      handleOpenDeleteModal();
                                     }}
                                   >
                                     Sil
@@ -399,7 +391,14 @@ const CariComp = () => {
                         })}
                       </TableRow>
                     );
-                  })}
+                  })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    Aradığınız cari bulunamadı.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -444,6 +443,11 @@ const CariComp = () => {
         setSelection1={setSelection1}
         isSelected2={isSelected2}
         setSelection2={setSelection2}
+      />
+      <DeleteModal
+        open={openDeleteModal}
+        handleDeleteProduct={handleDeleteProduct}
+        handleCloseDeleteModal={handleCloseDeleteModal}
       />
     </div>
   );
